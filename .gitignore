@@ -7,3 +7,5 @@ build
 .jhw-cache
 node_modules
 dev
+.idea
+**/TAGS
