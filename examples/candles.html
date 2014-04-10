@@ -10,6 +10,7 @@
         width : 800px;
         height: 384px;
         margin: 8px auto;
+		border: solid 1px #3abcf3;
       }
     </style>
   </head>
@@ -70,6 +71,9 @@
 			  return data[i].slice(-1)[0];
 			}
           },
+		  yaxis: {
+			height: 0.6
+		  },
 		});
 	  }
 	  drawCandles(container, data);
