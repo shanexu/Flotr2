@@ -190,6 +190,7 @@ Flotr.addType('stock_candles', {
 	  length = data.length,
 	  ymin = Number.MAX_VALUE,
 	  ymax = Number.MIN_VALUE,
+	  o = axis.options,
 	  y, i, j;
 	  for (i = 0; i < length; i++) {
 		for(j = 1; j<5; j++){
@@ -200,6 +201,7 @@ Flotr.addType('stock_candles', {
 	  }
 	  axis.max = Math.ceil(ymax * 2)/2.0;
       axis.min = Math.floor(ymin * 2)/2.0;
+	  axis.tickSize = Flotr.getTickSize(o.noTicks, axis.min, axis.max, o.tickDecimals);
 	}
   }
   
