@@ -215,8 +215,13 @@ Graph.prototype = {
 
     p.top = Math.floor(p.top); // In order the outline not to be blured
 
+	if(y.options.left) { p.left = Math.max(p.left, y.options.left);}
+    if(y.options.right) { p.right = Math.max(p.right, y.options.right);}
+	if(y2.options.left) { p.left = Math.max(p.left, y2.options.left);}
+    if(y2.options.right) { p.right = Math.max(p.right, y2.options.right);}
+
     this.plotWidth  = this.canvasWidth - p.left - p.right;
-    this.plotHeight = this.canvasHeight - p.bottom - p.top;
+    this.plotHeight = (y.options.height ? this.canvasHeight * y.options.height : this.canvasHeight) - p.bottom - p.top;
 
     // TODO post refactor, fix this
     x.length = x2.length = this.plotWidth;
