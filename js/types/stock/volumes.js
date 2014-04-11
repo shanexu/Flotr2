@@ -6,13 +6,9 @@ Flotr.addType('stock_volumes', {
     lineWidth: 1,          // => in pixels
     barWidth: 0.6,           // => in units of the x axis
     fill: true,            // => true to fill the area from the line to the x axis, false for (transparent) no fill
-    fillColor: null,       // => fill color
 	upFillColor: '#ff413a',// => up sticks fill color
     downFillColor: '#15a645',// => down sticks fill color
-    fillOpacity: 0.90,      // => opacity of the fill color, set to 1 for a solid fill, 0 hides the fill
-    horizontal: false,     // => horizontal bars (x and y inverted)
-    centered: true,        // => center the bars to their x axis value
-    topPadding: 0.1        // => top padding in percent
+    fillOpacity: 0.90      // => opacity of the fill color, set to 1 for a solid fill, 0 hides the fill
   },
 
   draw : function (options) {
@@ -39,12 +35,11 @@ Flotr.addType('stock_volumes', {
       data            = options.data,
       context         = options.context,
       shadowSize      = options.shadowSize,
+      lineWidth       = options.lineWidth,
       i, geometry, left, top, width, height,
 	  datum, open, close, color;
 
     if (data.length < 1) return;
-
-    this.translate(context, options.horizontal);
 
     for (i = 0; i < data.length; i++) {
 
@@ -61,6 +56,12 @@ Flotr.addType('stock_volumes', {
 
 	  color = options[open > close ? 'downFillColor' : 'upFillColor'];
 
+      if (shadowSize) {
+        context.save();
+        context.fillStyle = 'rgba(0,0,0,0.05)';
+        context.fillRect(left + shadowSize, top + shadowSize, width, height);
+        context.restore();
+      }
       if (options.fill) {
 		context.save();
 		context.globalAlpha = options.fillOpacity;
@@ -68,44 +69,29 @@ Flotr.addType('stock_volumes', {
 		context.fillRect(left, top, width, height);
 		context.restore();
 	  }
-      if (shadowSize) {
-        context.save();
-        context.fillStyle = 'rgba(0,0,0,0.05)';
-        context.fillRect(left + shadowSize, top + shadowSize, width, height);
-        context.restore();
-      }
       if (options.lineWidth) {
 		context.save();
 		context.strokeStyle = color;
-        context.strokeRect(left, top, width, height);
+        context.strokeRect(left - lineWidth/2, top, width + lineWidth/2, height);
 		context.restore();
       }
-    }
-  },
-
-  translate : function (context, horizontal) {
-    if (horizontal) {
-      context.rotate(-Math.PI / 2);
-      context.scale(-1, 1);
     }
   },
 
   getBarGeometry : function (x, y, options) {
 
     var
-      horizontal    = options.horizontal,
       barWidth      = options.barWidth,
-      centered      = options.centered,
       lineWidth     = options.lineWidth,
-      bisection     = centered ? barWidth / 2 : 0,
-      xScale        = horizontal ? options.yScale : options.xScale,
-      yScale        = horizontal ? options.xScale : options.yScale,
-      xValue        = horizontal ? y : x,
-      yValue        = horizontal ? x : y,
+      bisection     = barWidth / 2,
+      xScale        = options.xScale,
+      yScale        = options.yScale,
+      xValue        = x,
+      yValue        = y,
       left, right, top, bottom;
 
     left    = xScale(xValue - bisection);
-    right   = xScale(xValue + barWidth - bisection);
+    right   = xScale(xValue + bisection);
     top     = yScale(yValue);
     bottom  = yScale(0);
 
@@ -121,8 +107,8 @@ Flotr.addType('stock_volumes', {
       xScale    : xScale,
       yScale    : yScale,
       top       : top,
-      left      : Math.min(left, right) - lineWidth / 2,
-      width     : Math.abs(right - left) - lineWidth,
+      left      : Math.min(left, right) , /*- lineWidth / 2,*/
+      width     : Math.abs(right - left), /* - lineWidth,*/
       height    : bottom - top
     };
   },
@@ -175,7 +161,6 @@ Flotr.addType('stock_volumes', {
     context.save();
     context.strokeStyle = options.color;
     context.lineWidth = options.lineWidth;
-    this.translate(context, options.horizontal);
 
     // Draw highlight
     context.beginPath();
@@ -205,7 +190,6 @@ Flotr.addType('stock_volumes', {
       lineWidth   = 2 * options.lineWidth;
 
     context.save();
-    this.translate(context, options.horizontal);
     context.clearRect(
       left - lineWidth,
       Math.min(top, top + height) - lineWidth,
