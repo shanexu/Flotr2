@@ -264,7 +264,8 @@ Graph.prototype = {
           this.drawSeries(serie);
           if (serie.yaxis.options.stack) {
             context.restore();
-            // this.clip();
+            debugger;
+            this.clip2();
             context.save();
             context.translate(this.plotOffset.left, this.plotOffset.top);
           } else {
@@ -478,6 +479,43 @@ Graph.prototype = {
     }
   },
 
+  clip2: function (ctx) {
+
+    var
+      o   = this.plotOffset,
+      w   = this.canvasWidth,
+      h   = this.canvasHeight;
+
+    ctx = ctx || this.ctx;
+
+    if (
+      flotr.isIE && flotr.isIE < 9 && // IE w/o canvas
+      !flotr.isFlashCanvas // But not flash canvas
+    ) {
+
+      // Do not clip excanvas on overlay context
+      // Allow hits to overflow.
+      if (ctx === this.octx) {
+        return;
+      }
+
+      // Clipping for excanvas :-(
+      ctx.save();
+      ctx.fillStyle = this.processColor(this.options.ieBackgroundColor);
+      // ctx.fillRect(0, this.axes.y.canvasHeight, w, this.axes.y.canvasHeight + 1);
+      ctx.fillRect(0, this.axes.y.canvasHeight, o.left, h);
+      ctx.fillRect(0, h - o.bottom, w, o.bottom);
+      ctx.fillRect(w - o.right, this.axes.y.canvasHeight, o.right,h);
+      ctx.restore();
+    } else {
+      // ctx.clearRect(0, this.axes.y.canvasHeight, w, this.axes.y.canvasHeight + 1);
+      ctx.clearRect(0, this.axes.y.canvasHeight, o.left, h);
+      ctx.clearRect(0, h - o.bottom, w, o.bottom);
+      ctx.clearRect(w - o.right, this.axes.y.canvasHeight, o.right,h);
+    }
+
+  },
+
   clip: function (ctx) {
 
     var
@@ -503,7 +541,7 @@ Graph.prototype = {
       ctx.fillStyle = this.processColor(this.options.ieBackgroundColor);
       ctx.fillRect(0, 0, w, o.top);
       ctx.fillRect(0, 0, o.left, h);
-      ctx.fillRect(0, h - o.bottom, w, o.bottom);
+      ctx.fillRect(0, h - o.bottom, w, o.bottom + this.canvasHeight - h );
       ctx.fillRect(w - o.right, 0, o.right,h);
       ctx.restore();
     } else {
