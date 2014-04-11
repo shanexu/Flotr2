@@ -221,7 +221,8 @@ Graph.prototype = {
     if(y2.options.right) { p.right = Math.max(p.right, y2.options.right);}
 
     this.plotWidth  = this.canvasWidth - p.left - p.right;
-    this.plotHeight = (y.options.height ? this.canvasHeight * y.options.height : this.canvasHeight) - p.bottom - p.top;
+	y.canvasHeight = y.options.height ? this.canvasHeight * y.options.height : this.canvasHeight;
+    this.plotHeight = y.canvasHeight - p.bottom - p.top;
 
     // TODO post refactor, fix this
     x.length = x2.length = this.plotWidth;
@@ -462,7 +463,7 @@ Graph.prototype = {
     var
       o   = this.plotOffset,
       w   = this.canvasWidth,
-      h   = this.canvasHeight;
+      h   = this.axes.y.canvasHeight;
 
     ctx = ctx || this.ctx;
 
@@ -488,7 +489,7 @@ Graph.prototype = {
     } else {
       ctx.clearRect(0, 0, w, o.top);
       ctx.clearRect(0, 0, o.left, h);
-      ctx.clearRect(0, h - o.bottom, w, o.bottom);
+      ctx.clearRect(0, h - o.bottom, w, o.bottom + this.canvasHeight - h );
       ctx.clearRect(w - o.right, 0, o.right,h);
     }
   },
