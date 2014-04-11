@@ -1,0 +1,101 @@
+<!Doctype html>
+<html>
+  <head>
+    <style type="text/css">
+      body {
+        margin: 0px;
+        padding: 0px;
+      }
+      #container {
+        width : 800px;
+        height: 384px;
+        margin: 8px auto;
+		border: 1px solid #ff0000
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container"></div>
+  </body>
+  <script src="lib/jquery-2.1.0.js"></script>
+  <script src="../lib/bean.js"></script>
+  <script src="../lib/underscore.js"></script>
+  <script src="../js/Flotr.js"></script>
+  <script src="../js/DefaultOptions.js"></script>
+  <script src="../js/Color.js"></script>
+  <script src="../js/Date.js"></script>
+  <script src="../js/DOM.js"></script>
+  <script src="../js/EventAdapter.js"></script>
+  <script src="../js/Text.js"></script>
+  <script src="../js/Graph.js"></script>
+  <script src="../js/Axis.js"></script>
+  <script src="../js/Series.js"></script>
+  <script src="../js/types/lines.js"></script>
+  <script src="../js/types/bars.js"></script>
+  <script src="../js/types/bubbles.js"></script>
+  <script src="../js/types/stock/candles.js"></script>
+  <script src="../js/types/stock/volumes.js"></script>
+  <script src="../js/types/gantt.js"></script>
+  <script src="../js/types/markers.js"></script>
+  <script src="../js/types/pie.js"></script>
+  <script src="../js/types/points.js"></script>
+  <script src="../js/types/radar.js"></script>
+  <script src="../js/types/timeline.js"></script>
+  <script src="../js/plugins/crosshair.js"></script>
+  <script src="../js/plugins/download.js"></script>
+  <script src="../js/plugins/grid.js"></script>
+  <script src="../js/plugins/hit.js"></script>
+  <script src="../js/plugins/selection.js"></script>
+  <script src="../js/plugins/labels.js"></script>
+  <script src="../js/plugins/legend.js"></script>
+  <script src="../js/plugins/spreadsheet.js"></script>
+  <script src="../js/plugins/titles.js"></script>
+  <script src="js/data.js"></script>
+  <script>
+	$(function () {
+	  var drawTwoAxes = function(container){
+		var
+		d1 = [],
+		d2 = [],
+		d3 = [],
+		d4 = [],
+		d5 = [],
+		graph,
+		i;
+
+		for (i = 0; i <= 10; i += 0.1) {
+		  d1.push([i, 4 + Math.pow(i,1.5)]);
+		  d2.push([i, Math.pow(i,3)]);
+		}
+
+		graph = Flotr.draw(
+		  container,[ 
+			{ data : d1, label : 'y = 4 + x^(1.5)', lines : { fill : false } },
+			{ data : d2, label : 'y = x^3', yaxis : 2 }
+		  ], {
+			xaxis : {
+			  showLabels: false,
+			},
+			yaxis : {
+			  showLabels: false,
+			  height : 0.6
+			},
+			y2axis : {
+              stack: true,
+			  showLabels: false,
+			  color : '#FF0000'
+			},
+			grid : {
+
+			},
+			HtmlText : true,
+			legend : {
+			  show: false
+			}
+		  });
+	  };
+      var container = document.getElementById('container');
+	  drawTwoAxes(container);
+    });
+  </script>
+</html>

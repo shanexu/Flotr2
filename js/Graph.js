@@ -203,10 +203,9 @@ Graph.prototype = {
       p.right = 0;
     } else
     if (y.options.margin === true) {
-      p.left   += (options.grid.circular ? 0 : (y.used && y.options.showLabels ?  (y.maxLabel.width + margin) : 0)) +
+      p.left   += (options.grid.circular ? 0 : Math.max((y.used && y.options.showLabels ?  (y.maxLabel.width + margin) : 0), (y2.used &&  y2.options.stack && y2.options.showLabels ? (y2.maxLabel.width + margin) : 0))) +
                   (y.used && y.options.title ? (y.titleSize.width + margin) : 0) + maxOutset;
-
-      p.right  += (options.grid.circular ? 0 : (y2.used && y2.options.showLabels ? (y2.maxLabel.width + margin) : 0)) +
+      p.right  += (options.grid.circular ? 0 : (y2.used && !y2.options.stack && y2.options.showLabels ? (y2.maxLabel.width + margin) : 0)) +
                   (y2.used && y2.options.title ? (y2.titleSize.width + margin) : 0) + maxOutset;
     } else {
       p.left = y.options.margin;
@@ -227,6 +226,11 @@ Graph.prototype = {
     // TODO post refactor, fix this
     x.length = x2.length = this.plotWidth;
     y.length = y2.length = this.plotHeight;
+    if(y2.options.stack) {
+      y2.canvasHeight = this.canvasHeight - y.canvasHeight;
+      // TODO -2
+      y2.length = y2.canvasHeight - 2;
+    }
     y.offset = y2.offset = this.plotHeight;
     x.setScale();
     x2.setScale();
@@ -250,11 +254,27 @@ Graph.prototype = {
       context.translate(this.plotOffset.left, this.plotOffset.top);
 
       for (i = 0; i < this.series.length; i++) {
-        if (!this.series[i].hide) this.drawSeries(this.series[i]);
+        var serie = this.series[i];
+        if (!serie.hide) {
+          if (serie.yaxis.options.stack){
+            context.restore();
+            context.save();
+            context.translate(this.plotOffset.left, this.canvasHeight - this.plotHeight - 2);
+          }
+          this.drawSeries(serie);
+          if (serie.yaxis.options.stack) {
+            context.restore();
+            // this.clip();
+            context.save();
+            context.translate(this.plotOffset.left, this.plotOffset.top);
+          } else {
+            context.restore();
+            this.clip();
+          }
+        }
       }
 
       context.restore();
-      this.clip();
     }
 
     E.fire(this.el, 'flotr:afterdraw', [this.series, this]);
