@@ -48,8 +48,17 @@ Flotr.addPlugin('labels', {
       drawLabelNoHtmlText(this, a.x, 'center', 'top');
       drawLabelNoHtmlText(this, a.x2, 'center', 'bottom');
       drawLabelNoHtmlText(this, a.y, 'right', 'middle');
-      drawLabelNoHtmlText(this, a.y2, 'left', 'middle');
-    
+      if(a.y2.options.stack){
+        ctx.restore();
+        ctx.save();
+        ctx.translate(0, this.canvasHeight - this.plotHeight -2);
+      }
+      drawLabelNoHtmlText(this, a.y2, (a.y2.options.stack? 'right' : 'left'), 'middle');
+      if(a.y2.options.stack){
+        ctx.restore();
+        ctx.save();
+      }
+
     } else if ((
         a.x.options.showLabels ||
         a.x2.options.showLabels ||
@@ -135,13 +144,13 @@ Flotr.addPlugin('labels', {
 
         Flotr.drawText(
           ctx, tick.label,
-          leftOffset(graph, isX, isFirst, offset),
+          leftOffset(graph, isX, (!isX && !isFirst && axis.options.stack ? true : isFirst), offset),
           topOffset(graph, isX, isFirst, offset),
           style
         );
 
         // Only draw on axis y2
-        if (!isX && !isFirst) {
+        if (!isX && !isFirst && !axis.options.stack) {
           ctx.save();
           ctx.strokeStyle = style.color;
           ctx.beginPath();
