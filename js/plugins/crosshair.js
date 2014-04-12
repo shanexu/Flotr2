@@ -26,7 +26,7 @@ Flotr.addPlugin('crosshair', {
       x = plotOffset.left + Math.round(pos.relX) + 0.5,
       y = plotOffset.top + Math.round(pos.relY) + 0.5;
     
-    if (pos.relX < 0 || pos.relY < 0 || pos.relX > this.plotWidth || pos.relY > this.plotHeight) {
+    if (pos.relX < 0 || pos.relY < 0 || pos.relX > this.plotWidth || (pos.relY > this.plotHeight && !this.axes.y2.options.stack)) {
       this.el.style.cursor = null;
       D.removeClass(this.el, 'flotr-crosshair');
       return; 
@@ -44,7 +44,7 @@ Flotr.addPlugin('crosshair', {
     
     if (options.mode.indexOf('x') != -1) {
       octx.moveTo(x, plotOffset.top);
-      octx.lineTo(x, plotOffset.top + this.plotHeight);
+      octx.lineTo(x, plotOffset.top + this.axes.y2.options.stack ? this.canvasHeight : this.plotHeight);
     }
     
     if (options.mode.indexOf('y') != -1) {
@@ -70,7 +70,7 @@ Flotr.addPlugin('crosshair', {
         Math.round(position.relX) + plotOffset.left,
         plotOffset.top,
         1,
-        this.plotHeight + 1
+        this.axes.y2.options.stack ? this.canvasHeight - plotOffset.top : this.plotHeight + 1
       );
       context.clearRect(
         plotOffset.left,
