@@ -29,7 +29,7 @@ Flotr.addPlugin('graphGrid', {
       minorHorizontalLines = grid.minorHorizontalLines,
       plotHeight = this.plotHeight,
       plotWidth = this.plotWidth,
-      scope = {ctx:ctx, plotWidth: plotWidth, plotHeight: plotHeight},
+      scope = {ctx:ctx, plotWidth: plotWidth, plotHeight: plotHeight, top: 0},
       a, v, i, j;
         
     if(verticalLines || minorVerticalLines || 
@@ -120,7 +120,7 @@ Flotr.addPlugin('graphGrid', {
       minorHorizontalLines = grid.minorHorizontalLines,
       plotHeight = this.plotHeight,
       plotWidth = this.plotWidth,
-      scope = {ctx:ctx, plotWidth: plotWidth, plotHeight: plotHeight},
+      scope = {ctx:ctx, plotWidth: plotWidth, plotHeight: plotHeight, top: this.plotHeight - this.axes.y2.canvasHeight + 2},
       a, v, i, j;
         
     if(verticalLines || minorVerticalLines || 
@@ -165,9 +165,10 @@ Flotr.addPlugin('graphGrid', {
   drawVerticalLines: function(scope) {
     var
       ctx = scope.ctx,
+      top = scope.top,
       plotHeight = scope.plotHeight;
     return function(x){
-      ctx.moveTo(x, 0);
+      ctx.moveTo(x, top);
       ctx.lineTo(x, plotHeight);
     };
   },
