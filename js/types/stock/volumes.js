@@ -107,8 +107,8 @@ Flotr.addType('stock_volumes', {
       xScale    : xScale,
       yScale    : yScale,
       top       : top,
-      left      : Math.min(left, right) , /*- lineWidth / 2,*/
-      width     : Math.abs(right - left), /* - lineWidth,*/
+      left      : Math.min(left, right) ,
+      width     : Math.abs(right - left),
       height    : bottom - top
     };
   },
@@ -149,9 +149,11 @@ Flotr.addType('stock_volumes', {
   },
 
   drawHit : function (options) {
+
     var
       context     = options.context,
       args        = options.args,
+      lineWidth   = options.lineWidth,
       geometry    = this.getBarGeometry(args.x, args.y, options),
       left        = geometry.left,
       top         = geometry.top,
@@ -160,19 +162,18 @@ Flotr.addType('stock_volumes', {
 
     context.save();
     context.strokeStyle = options.color;
-    context.lineWidth = options.lineWidth;
+    context.lineWidth = lineWidth * 2,
 
     // Draw highlight
     context.beginPath();
+    
     context.moveTo(left, top + height);
     context.lineTo(left, top);
     context.lineTo(left + width, top);
     context.lineTo(left + width, top + height);
-    if (options.fill) {
-      context.fillStyle = options.fillStyle;
-      context.fill();
-    }
+
     context.stroke();
+    
     context.closePath();
 
     context.restore();

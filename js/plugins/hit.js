@@ -80,7 +80,12 @@ Flotr.addPlugin('hit', {
       octx.lineWidth = (s.points ? s.points.lineWidth : 1);
       octx.strokeStyle = s.mouse.lineColor;
       octx.fillStyle = this.processColor(s.mouse.fillColor || '#ffffff', {opacity: s.mouse.fillOpacity});
-      octx.translate(this.plotOffset.left, this.plotOffset.top);
+
+      if(s.yaxis.options.stack){
+        octx.translate(this.plotOffset.left, s.yaxis.canvasHeight + this.plotOffset.bottom);
+      } else {
+        octx.translate(this.plotOffset.left, this.plotOffset.top);
+      }
 
       if (!this.hit.executeOnType(s, 'drawHit', n)) {
         var
@@ -95,7 +100,13 @@ Flotr.addPlugin('hit', {
         octx.closePath();
       }
       octx.restore();
-      this.clip(octx);
+
+      if(s.yaxis.options.stack){
+        this.clip2(octx);
+      } else {
+        this.clip(octx);
+      }
+
     }
     this.prevHit = n;
   },
@@ -105,9 +116,18 @@ Flotr.addPlugin('hit', {
   clearHit: function(){
     var prev = this.prevHit,
         octx = this.octx,
-        plotOffset = this.plotOffset;
+        plotOffset = this.plotOffset,
+        s;
+
     octx.save();
-    octx.translate(plotOffset.left, plotOffset.top);
+
+    if (prev && prev.series.yaxis.options.stack){
+      s = prev.series;
+      octx.translate(this.plotOffset.left, s.yaxis.canvasHeight + this.plotOffset.bottom);
+    } else {
+      octx.translate(plotOffset.left, plotOffset.top);
+    }
+
     if (prev) {
       if (!this.hit.executeOnType(prev.series, 'clearHit', this.prevHit)) {
         // TODO fix this (points) should move to general testable graph mixin
@@ -357,7 +377,7 @@ Flotr.addPlugin('hit', {
         },
         radius = (Math.min(this.canvasWidth, this.canvasHeight) * s.pie.sizeRatio) / 2,
         bisection = n.sAngle<n.eAngle ? (n.sAngle + n.eAngle) / 2: (n.sAngle + n.eAngle + 2* Math.PI) / 2;
-      
+
       pos += 'bottom:' + (m - top - center.y - Math.sin(bisection) * radius/2 + this.canvasHeight) + 'px;top:auto;';
       pos += 'left:' + (m + left + center.x + Math.cos(bisection) * radius/2) + 'px;right:auto;';
 

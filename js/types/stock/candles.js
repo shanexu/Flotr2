@@ -8,8 +8,7 @@ Flotr.addType('stock_candles', {
     fill: true,            // => true to fill the area from the line to the x axis, false for (transparent) no fill
     upFillColor: '#ff413a',// => up sticks fill color
     downFillColor: '#15a645',// => down sticks fill color
-    fillOpacity: 0.90,      // => opacity of the fill color, set to 1 for a solid fill, 0 hides the fill
-    barcharts: false       // => draw as barcharts (not standard bars but financial barcharts)
+    fillOpacity: 0.90      // => opacity of the fill color, set to 1 for a solid fill, 0 hides the fill
   },
 
   draw : function (options) {
@@ -71,7 +70,7 @@ Flotr.addType('stock_candles', {
       color = options[open > close ? 'downFillColor' : 'upFillColor'];
 
       // Fill the candle.
-      if (options.fill && !options.barcharts) {
+      if (options.fill) {
         context.fillStyle = 'rgba(0,0,0,0.05)';
         context.fillRect(left + shadowSize, top2 + shadowSize, right - left, bottom2 - top2);
         context.save();
@@ -89,22 +88,11 @@ Flotr.addType('stock_candles', {
         context.strokeStyle = color;
         context.beginPath();
 
-        if (options.barcharts) {
-          context.moveTo(x, Math.floor(top + lineWidth));
-          context.lineTo(x, Math.floor(bottom + lineWidth));
-
-          reverseLines = open < close;
-          context.moveTo(reverseLines ? right : left, Math.floor(top2 + lineWidth));
-          context.lineTo(x, Math.floor(top2 + lineWidth));
-          context.moveTo(x, Math.floor(bottom2 + lineWidth));
-          context.lineTo(reverseLines ? left : right, Math.floor(bottom2 + lineWidth));
-        } else {
-          context.strokeRect(left, top2 + lineWidth, right - left, bottom2 - top2);
-          context.moveTo(x, Math.floor(top2 + lineWidth));
-          context.lineTo(x, Math.floor(top + lineWidth));
-          context.moveTo(x, Math.floor(bottom2 + lineWidth));
-          context.lineTo(x, Math.floor(bottom + lineWidth));
-        }
+        context.strokeRect(left, top2 + lineWidth, right - left, bottom2 - top2);
+        context.moveTo(x, Math.floor(top2 + lineWidth));
+        context.lineTo(x, Math.floor(top + lineWidth));
+        context.moveTo(x, Math.floor(bottom2 + lineWidth));
+        context.lineTo(x, Math.floor(bottom + lineWidth));
 
         context.closePath();
         context.stroke();
