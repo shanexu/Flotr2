@@ -252,19 +252,21 @@ Graph.prototype = {
 
       context.save();
       context.translate(this.plotOffset.left, this.plotOffset.top);
-
-      for (i = 0; i < this.series.length; i++) {
-        var serie = this.series[i];
+      var sortedSeries = this.series.sort(function(a,b){return a.yaxis.options.stack - a.yaxis.options.stack;});
+      for (i = 0; i < sortedSeries.length; i++) {
+        var serie = sortedSeries[i];
         if (!serie.hide) {
           if (serie.yaxis.options.stack){
             context.restore();
             context.save();
             context.translate(this.plotOffset.left, this.canvasHeight - this.plotHeight - 2);
           }
+          if (serie.yaxis.options.stack){
+            E.fire(this.el, 'flotr:beforedrawy2axis', [this.series, this]);
+          }
           this.drawSeries(serie);
           if (serie.yaxis.options.stack) {
             context.restore();
-            debugger;
             this.clip2();
             context.save();
             context.translate(this.plotOffset.left, this.plotOffset.top);
@@ -480,7 +482,7 @@ Graph.prototype = {
   },
 
   clip2: function (ctx) {
-
+    console.log("clip2");
     var
       o   = this.plotOffset,
       w   = this.canvasWidth,
@@ -502,22 +504,20 @@ Graph.prototype = {
       // Clipping for excanvas :-(
       ctx.save();
       ctx.fillStyle = this.processColor(this.options.ieBackgroundColor);
-      // ctx.fillRect(0, this.axes.y.canvasHeight, w, this.axes.y.canvasHeight + 1);
       ctx.fillRect(0, this.axes.y.canvasHeight, o.left, h);
       ctx.fillRect(0, h - o.bottom, w, o.bottom);
       ctx.fillRect(w - o.right, this.axes.y.canvasHeight, o.right,h);
       ctx.restore();
     } else {
-      // ctx.clearRect(0, this.axes.y.canvasHeight, w, this.axes.y.canvasHeight + 1);
       ctx.clearRect(0, this.axes.y.canvasHeight, o.left, h);
-      ctx.clearRect(0, h - o.bottom, w, o.bottom);
+      ctx.clearRect(0, h - 1, w, 1);
       ctx.clearRect(w - o.right, this.axes.y.canvasHeight, o.right,h);
     }
 
   },
 
   clip: function (ctx) {
-
+    console.log("clip");
     var
       o   = this.plotOffset,
       w   = this.canvasWidth,
@@ -541,13 +541,13 @@ Graph.prototype = {
       ctx.fillStyle = this.processColor(this.options.ieBackgroundColor);
       ctx.fillRect(0, 0, w, o.top);
       ctx.fillRect(0, 0, o.left, h);
-      ctx.fillRect(0, h - o.bottom, w, o.bottom + this.canvasHeight - h );
+      ctx.fillRect(0, h - o.bottom, w, h + o.bottom);
       ctx.fillRect(w - o.right, 0, o.right,h);
       ctx.restore();
     } else {
       ctx.clearRect(0, 0, w, o.top);
       ctx.clearRect(0, 0, o.left, h);
-      ctx.clearRect(0, h - o.bottom, w, o.bottom + this.canvasHeight - h );
+      ctx.clearRect(0, h - o.bottom, w, h + o.bottom);
       ctx.clearRect(w - o.right, 0, o.right,h);
     }
   },

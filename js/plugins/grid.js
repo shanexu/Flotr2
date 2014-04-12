@@ -11,11 +11,14 @@ Flotr.addPlugin('graphGrid', {
     },
     'flotr:afterdraw' : function () {
       this.graphGrid.drawOutline();
+    },
+    'flotr:beforedrawy2axis' : function () {
+      this.graphGrid.drawGridY2Axis();
     }
   },
 
   drawGrid: function(){
-
+    console.log("drawGrid");
     var
       ctx = this.ctx,
       options = this.options,
@@ -26,6 +29,7 @@ Flotr.addPlugin('graphGrid', {
       minorHorizontalLines = grid.minorHorizontalLines,
       plotHeight = this.plotHeight,
       plotWidth = this.plotWidth,
+      scope = {ctx:ctx, plotWidth: plotWidth, plotHeight: plotHeight},
       a, v, i, j;
         
     if(verticalLines || minorVerticalLines || 
@@ -36,7 +40,7 @@ Flotr.addPlugin('graphGrid', {
     ctx.lineWidth = 1;
     ctx.strokeStyle = grid.tickColor;
     
-    function circularHorizontalTicks (ticks) {
+    var circularHorizontalTicks = function(ticks) {
       for(i = 0; i < ticks.length; ++i){
         var ratio = ticks[i].v / a.max;
         for(j = 0; j <= sides; ++j){
@@ -46,24 +50,7 @@ Flotr.addPlugin('graphGrid', {
           );
         }
       }
-    }
-    function drawGridLines (ticks, callback) {
-      _.each(_.pluck(ticks, 'v'), function(v){
-        // Don't show lines on upper and lower bounds.
-        if ((v <= a.min || v >= a.max) || 
-            (v == a.min || v == a.max) && grid.outlineWidth)
-          return;
-        callback(Math.floor(a.d2p(v)) + ctx.lineWidth/2);
-      });
-    }
-    function drawVerticalLines (x) {
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, plotHeight);
-    }
-    function drawHorizontalLines (y) {
-      ctx.moveTo(0, y);
-      ctx.lineTo(plotWidth, y);
-    }
+    };
 
     if (grid.circular) {
       ctx.translate(this.plotOffset.left+plotWidth/2, this.plotOffset.top+plotHeight/2);
@@ -104,12 +91,12 @@ Flotr.addPlugin('graphGrid', {
       ctx.beginPath();
 
       a = this.axes.x;
-      if (verticalLines)        drawGridLines(a.ticks, drawVerticalLines);
-      if (minorVerticalLines)   drawGridLines(a.minorTicks, drawVerticalLines);
+      if (verticalLines)        this.graphGrid.drawGridLines(a, grid, a.ticks, ctx, this.graphGrid.drawVerticalLines(scope));
+      if (minorVerticalLines)   this.graphGrid.drawGridLines(a, grid, a.minorTicks, ctx, this.graphGrid.drawVerticalLines(scope));
 
       a = this.axes.y;
-      if (horizontalLines)      drawGridLines(a.ticks, drawHorizontalLines);
-      if (minorHorizontalLines) drawGridLines(a.minorTicks, drawHorizontalLines);
+      if (horizontalLines)      this.graphGrid.drawGridLines(a, grid, a.ticks, ctx, this.graphGrid.drawHorizontalLines(scope));
+      if (minorHorizontalLines) this.graphGrid.drawGridLines(a, grid, a.minorTicks, ctx, this.graphGrid.drawHorizontalLines(scope));
 
       ctx.stroke();
     }
@@ -119,7 +106,81 @@ Flotr.addPlugin('graphGrid', {
        horizontalLines || minorHorizontalLines){
       E.fire(this.el, 'flotr:aftergrid', [this.axes.x, this.axes.y, options, this]);
     }
-  }, 
+  },
+
+  drawGridY2Axis: function(){
+
+    var
+      ctx = this.ctx,
+      options = this.options,
+      grid = options.grid,
+      verticalLines = grid.verticalLines,
+      horizontalLines = grid.horizontalLines,
+      minorVerticalLines = grid.minorVerticalLines,
+      minorHorizontalLines = grid.minorHorizontalLines,
+      plotHeight = this.plotHeight,
+      plotWidth = this.plotWidth,
+      scope = {ctx:ctx, plotWidth: plotWidth, plotHeight: plotHeight},
+      a, v, i, j;
+        
+    if(verticalLines || minorVerticalLines || 
+           horizontalLines || minorHorizontalLines){
+      E.fire(this.el, 'flotr:beforegridy2axis', [this.axes.x, this.axes.y2, options, this]);
+    }
+    ctx.save();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = grid.tickColor;
+    
+    ctx.beginPath();
+
+    a = this.axes.x;
+    if (verticalLines)        this.graphGrid.drawGridLines(a, grid, a.ticks, ctx, this.graphGrid.drawVerticalLines(scope));
+    if (minorVerticalLines)   this.graphGrid.drawGridLines(a, grid, a.minorTicks, ctx, this.graphGrid.drawVerticalLines(scope));
+
+    a = this.axes.y2;
+    if(a.options.stack){
+      if (horizontalLines)      this.graphGrid.drawGridLines(a, grid, a.ticks, ctx, this.graphGrid.drawHorizontalLines(scope));
+      if (minorHorizontalLines) this.graphGrid.drawGridLines(a, grid, a.minorTicks, ctx, this.graphGrid.drawHorizontalLines(scope));
+    }
+    
+    ctx.stroke();
+    
+    ctx.restore();
+    if(verticalLines || minorVerticalLines ||
+       horizontalLines || minorHorizontalLines){
+      E.fire(this.el, 'flotr:aftergridy2axis', [this.axes.x, this.axes.y2, options, this]);
+    }
+  },
+
+  drawGridLines: function(axis, grid, ticks, ctx, callback) {
+    _.each(_.pluck(ticks, 'v'), function(v){
+      // Don't show lines on upper and lower bounds.
+      if ((v <= axis.min || v >= axis.max) || 
+          (v == axis.min || v == axis.max) && grid.outlineWidth)
+        return;
+      callback(Math.floor(axis.d2p(v)) + ctx.lineWidth/2);
+    });
+  },
+
+  drawVerticalLines: function(scope) {
+    var
+      ctx = scope.ctx,
+      plotHeight = scope.plotHeight;
+    return function(x){
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, plotHeight);
+    };
+  },
+
+  drawHorizontalLines: function(scope) {
+    var
+      ctx = scope.ctx,
+      plotWidth = scope.plotWidth;
+    return function(y){
+      ctx.moveTo(0, y);
+      ctx.lineTo(plotWidth, y);
+    };
+  },
 
   drawOutline: function(){
     var
@@ -179,6 +240,19 @@ Flotr.addPlugin('graphGrid', {
       ctx[outline.indexOf('e') !== -1 ? lineTo : moveTo](plotWidth, plotHeight);
       ctx[outline.indexOf('s') !== -1 ? lineTo : moveTo](orig, plotHeight);
       ctx[outline.indexOf('w') !== -1 ? lineTo : moveTo](orig, orig);
+
+      if(this.axes.y2.options.stack){
+        ctx.translate(-leftOffset, -topOffset);
+        ctx.translate(leftOffset, this.canvasHeight - this.axes.y2.canvasHeight);
+        plotHeight = this.axes.y2.length + lw / 2;
+        ctx.moveTo(orig, orig);
+        ctx[outline.indexOf('n') !== -1 ? lineTo : moveTo](plotWidth, orig);
+        ctx[outline.indexOf('e') !== -1 ? lineTo : moveTo](plotWidth, plotHeight);
+        ctx[outline.indexOf('s') !== -1 ? lineTo : moveTo](orig, plotHeight);
+        ctx[outline.indexOf('w') !== -1 ? lineTo : moveTo](orig, orig);
+        ctx.translate(-leftOffset, -this.canvasHeight + this.axes.y2.canvasHeight);
+        ctx.translate(leftOffset, topOffset);
+      }
       ctx.stroke();
       ctx.closePath();
     }
