@@ -43,7 +43,7 @@ Flotr.addPlugin('hit', {
   executeOnType: function(s, method, args){
     var
       success = false,
-      options;
+      options, mouse;
 
     if (!_.isArray(s)) s = [s];
 
@@ -59,6 +59,11 @@ Flotr.addPlugin('hit', {
           options.index = index;
 
           if (args) options.args = args;
+          if (args && args[0] && s.yaxis.options.stack){
+            mouse = _.clone(args[0]);
+            mouse.relY -= (s.yaxis.canvasHeight + this.plotOffset.bottom);
+            options.args = [mouse, args[1]];
+          }
           this[type][method].call(this[type], options);
           success = true;
         }
@@ -363,7 +368,7 @@ Flotr.addPlugin('hit', {
     if (!n.mouse.relative) { // absolute to the canvas
       pos += 'top:';
       if      (p.charAt(0) == 'n') pos += (oTop + m + top);
-      else if (p.charAt(0) == 's') pos += (oTop - m + top + this.plotHeight - size.height);
+      else if (p.charAt(0) == 's') pos += (oTop - m + top + (this.axes.y2.options.stack ? this.canvasHeight : this.plotHeight) - size.height);
       pos += 'px;bottom:auto;left:';
       if      (p.charAt(1) == 'e') pos += (oLeft - m + left + this.plotWidth - size.width);
       else if (p.charAt(1) == 'w') pos += (oLeft + m + left);
