@@ -10,6 +10,7 @@
         width : 800px;
         height: 384px;
         margin: 8px auto;
+        /* border: solid 1px #ff0000; */
       }
     </style>
   </head>
@@ -72,7 +73,7 @@
           yaxis: 2
         }], {
 		  xaxis: {
-            showLabels: false,
+            showLabels: true,
 			tickFormatter: function(num){
 			  var i = parseInt(num);
 			  return data[i].slice(-1)[0];

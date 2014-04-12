@@ -66,13 +66,13 @@ Flotr.addType('stock_volumes', {
 		context.save();
 		context.globalAlpha = options.fillOpacity;
 		context.fillStyle = color;
-		context.fillRect(left, top, width, height);
+		context.fillRect(left, top + lineWidth, width, height);
 		context.restore();
 	  }
       if (options.lineWidth) {
 		context.save();
 		context.strokeStyle = color;
-        context.strokeRect(left - lineWidth/2, top, width + lineWidth/2, height);
+        context.strokeRect(left, top + lineWidth, width, height);
 		context.restore();
       }
     }
