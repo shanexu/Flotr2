@@ -51,7 +51,7 @@ Flotr.addPlugin('labels', {
       if(a.y2.options.stack){
         ctx.restore();
         ctx.save();
-        ctx.translate(0, this.canvasHeight - this.plotHeight -2);
+        ctx.translate(0, this.canvasHeight - this.plotHeight - 2);
       }
       drawLabelNoHtmlText(this, a.y2, (a.y2.options.stack? 'right' : 'left'), 'middle');
       if(a.y2.options.stack){
@@ -182,6 +182,7 @@ Flotr.addPlugin('labels', {
       var
         isX     = axis.orientation === 1,
         isFirst = axis.n === 1,
+        isStack = axis.options.stack,
         name = '',
         left, style, top,
         offset = graph.plotOffset;
@@ -204,6 +205,7 @@ Flotr.addPlugin('labels', {
             (isX ?
               ((isFirst ? 1 : -1 ) * (graph.plotHeight + options.grid.labelMargin)) :
               axis.d2p(tick.v) - axis.maxLabel.height / 2);
+          top = isStack ? top + graph.canvasHeight - graph.plotHeight - 2 : top;
           left = isX ? (offset.left + axis.d2p(tick.v) - xBoxWidth / 2) : 0;
 
           name = '';
@@ -217,13 +219,13 @@ Flotr.addPlugin('labels', {
           html += [
             '<div style="position:absolute; text-align:' + (isX ? 'center' : 'right') + '; ',
             'top:' + top + 'px; ',
-            ((!isX && !isFirst) ? 'right:' : 'left:') + left + 'px; ',
-            'width:' + (isX ? xBoxWidth : ((isFirst ? offset.left : offset.right) - options.grid.labelMargin)) + 'px; ',
+            ((!isX && !isFirst && !isStack) ? 'right:' : 'left:') + left + 'px; ',
+            'width:' + (isX ? xBoxWidth : ((isFirst || (!isFirst && isStack) ? offset.left : offset.right) - options.grid.labelMargin)) + 'px; ',
             axis.options.color ? ('color:' + axis.options.color + '; ') : ' ',
             '" class="flotr-grid-label' + name + '">' + tick.label + '</div>'
           ].join(' ');
           
-          if (!isX && !isFirst) {
+          if (!isX && !isFirst && !isStack) {
             ctx.moveTo(offset.left + graph.plotWidth - 8, offset.top + axis.d2p(tick.v));
             ctx.lineTo(offset.left + graph.plotWidth, offset.top + axis.d2p(tick.v));
           }

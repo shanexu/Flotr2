@@ -18,7 +18,7 @@ Flotr.addPlugin('graphGrid', {
   },
 
   drawGrid: function(){
-    console.log("drawGrid");
+
     var
       ctx = this.ctx,
       options = this.options,

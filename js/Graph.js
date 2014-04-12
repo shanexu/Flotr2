@@ -482,7 +482,7 @@ Graph.prototype = {
   },
 
   clip2: function (ctx) {
-    console.log("clip2");
+
     var
       o   = this.plotOffset,
       w   = this.canvasWidth,
@@ -517,7 +517,7 @@ Graph.prototype = {
   },
 
   clip: function (ctx) {
-    console.log("clip");
+
     var
       o   = this.plotOffset,
       w   = this.canvasWidth,
