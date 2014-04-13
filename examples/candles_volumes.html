@@ -21,6 +21,7 @@
     </div>
   </body>
   <script src="lib/jquery-2.1.0.js"></script>
+  <script src="lib/jQueryRotate.js"></script>
   <script src="../lib/bean.js"></script>
   <script src="../lib/underscore.js"></script>
   <script src="../js/Flotr.js"></script>
@@ -45,6 +46,7 @@
   <script src="../js/types/radar.js"></script>
   <script src="../js/types/timeline.js"></script>
   <script src="../js/plugins/crosshair.js"></script>
+  <script src="../js/plugins/cross.js"></script>
   <script src="../js/plugins/download.js"></script>
   <script src="../js/plugins/grid.js"></script>
   <script src="../js/plugins/hit.js"></script>
@@ -89,20 +91,22 @@
             noTicks: 2
 		  },
           HtmlText: true,
-          mouse: {
-            trackFormatter:function(){},
-            track: true
-          },
+          /* mouse: {
+          trackFormatter:function(){},
+          track: true
+          }, */
           crosshair: {
-            mode: "xy",
-            color: "#ff0000"
-          }
+            mode: "yx",
+            color: "#ff0000",
+            hideCursor: false
+          },
+          rotate: 1
 		});
         return graph;
 	  };
       
       var container = $('#container');
-      container.height($(document).height()*0.7);
+      container.height($(document).height()*0.98);
       container = container.get(0);
       
 	  var data = getData(0,51);
@@ -121,6 +125,7 @@
       $("#downloadBtn").click(function(){
         g.download.saveImage("png");
       });
+
     });
   </script>
 </html>

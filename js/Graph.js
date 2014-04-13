@@ -677,6 +677,12 @@ Graph.prototype = {
     this.canvasHeight = size.height;
     this.canvasWidth = size.width;
     this.textEnabled = !!this.ctx.drawText || !!this.ctx.fillText; // Enable text functions
+    if(this.options.rotate === 1){
+      this.canvasHeight = size.width;
+      this.canvasWidth = size.height;
+      this.ctx.transform(0, 1, -1, 0, size.width, 0);
+      this.octx.transform(0, 1, -1, 0, size.width, 0);
+    }
 
     function getCanvas(canvas, name){
       if(!canvas){

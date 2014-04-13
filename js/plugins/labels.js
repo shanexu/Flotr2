@@ -82,6 +82,10 @@ Flotr.addPlugin('labels', {
         color: options.grid.color
       });
       div.className = 'flotr-labels';
+      if(this.options.rotate){
+        div.style["-webkit-transform-origin"] = div.style.transformOrigin = "0 0";
+        div.style["-webkit-transform"] = div.style.transform = "matrix(0, 1, -1, 0, "+ this.canvasHeight +", 0)";
+      }
       D.insert(this.el, div);
       D.insert(div, html);
     }
