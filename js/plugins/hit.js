@@ -236,8 +236,10 @@ Flotr.addPlugin('hit', {
     var
       series    = this.series,
       options   = this.options,
-      relX      = mouse.relX,
-      relY      = mouse.relY,
+      // relX      = mouse.relX,
+      // relY      = mouse.relY,
+      relX      = mouse.rotatedRelX,
+      relY      = mouse.rotatedRelY,
       compare   = Number.MAX_VALUE,
       compareX  = Number.MAX_VALUE,
       closest   = {},
@@ -263,6 +265,7 @@ Flotr.addPlugin('hit', {
 
       serie = series[i];
       data = serie.data;
+//      debugger;
       mouseX = serie.xaxis.p2d(relX);
       mouseY = serie.yaxis.p2d(relY);
 

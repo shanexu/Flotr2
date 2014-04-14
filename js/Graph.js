@@ -348,7 +348,7 @@ Graph.prototype = {
    * @return {Object} Object with coordinates of the mouse.
    */
   getEventPosition: function (e){
-
+//TODO when rotate
     var
       d = document,
       b = d.body,
@@ -359,16 +359,30 @@ Graph.prototype = {
       pointer = E.eventPointer(e),
       dx = pointer.x - lastMousePos.pageX,
       dy = pointer.y - lastMousePos.pageY,
-      r, rx, ry;
+      r, rx, ry, rrx, rry;
 
     if ('ontouchstart' in this.el) {
       r = D.position(this.overlay);
       rx = pointer.x - r.left - plotOffset.left;
       ry = pointer.y - r.top - plotOffset.top;
+      if(this.options.rotate){
+        rrx = pointer.y - r.top - plotOffset.left;
+        rry = this.canvasHeight - plotOffset.top - (pointer.x - r.left - plotOffset.left);
+      } else {
+        rrx = rx;
+        rry = ry;
+      }
     } else {
       r = this.overlay.getBoundingClientRect();
       rx = e.clientX - r.left - plotOffset.left - b.scrollLeft - de.scrollLeft;
       ry = e.clientY - r.top - plotOffset.top - b.scrollTop - de.scrollTop;
+      if(this.options.rotate){
+        rrx = e.clientY - r.top - plotOffset.left - b.scrollTop - de.scrollTop;
+        rry = this.canvasHeight - plotOffset.top - (e.clientX - r.left - b.scrollLeft - de.scrollLeft);
+      } else {
+        rrx = rx;
+        rry = ry;
+      }
     }
 
     return {
@@ -383,7 +397,9 @@ Graph.prototype = {
       absX: pointer.x,
       absY: pointer.y,
       pageX: pointer.x,
-      pageY: pointer.y
+      pageY: pointer.y,
+      rotatedRelX: rrx,
+      rotatedRelY: rry
     };
   },
   /**

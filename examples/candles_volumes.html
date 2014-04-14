@@ -95,8 +95,8 @@
           trackFormatter:function(){},
           track: true
           }, */
-          crosshair: {
-            mode: "yx",
+          cross: {
+            mode: "v",
             color: "#ff0000",
             hideCursor: false
           },
@@ -108,14 +108,14 @@
       var container = $('#container');
       container.height($(document).height()*0.98);
       container = container.get(0);
-      
-	  var data = getData(0,51);
+      var l = 25 + 1;
+	  var data = getData(0,l);
 	  g = drawCandles(container, data);
       $("#startBtn").click(function(){
         var i = 0;
         var id = setInterval(function(){
-          if(i+51<=300){
-            g = drawCandles(container, getData(i, i+51));
+          if(i+l<=300){
+            g = drawCandles(container, getData(i, i+l));
             i++;
           } else {
             clearInterval(id);
