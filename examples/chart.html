@@ -1,0 +1,120 @@
+<!Doctype html>
+<html>
+  <head>
+    <style type="text/css">
+      body {
+        margin: 0px;
+        padding: 0px;
+      }
+      #container {
+        width : 90%;
+        margin: 8px auto;
+        /* border: solid 1px #ff0000; */
+      }
+    </style>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  </head>
+  <body>
+    <div id="container"></div>
+    <div style="width: 90%; margin: 8px auto;">
+      <button id="startBtn">start</button><button id="downloadBtn">download</button><button id="rotateBtn">rotate</button>
+    </div>
+  </body>
+  <script src="lib/jquery-2.1.0.js"></script>
+  <script src="../lib/bean.js"></script>
+  <script src="../lib/underscore.js"></script>
+  <script src="../js/Flotr.js"></script>
+  <script src="../js/DefaultOptions.js"></script>
+  <script src="../js/Color.js"></script>
+  <script src="../js/Date.js"></script>
+  <script src="../js/DOM.js"></script>
+  <script src="../js/EventAdapter.js"></script>
+  <script src="../js/Text.js"></script>
+  <script src="../js/Graph.js"></script>
+  <script src="../js/Axis.js"></script>
+  <script src="../js/Series.js"></script>
+  <script src="../js/types/lines.js"></script>
+  <script src="../js/types/bars.js"></script>
+  <script src="../js/types/bubbles.js"></script>
+  <script src="../js/types/stock/candles.js"></script>
+  <script src="../js/types/stock/volumes.js"></script>
+  <script src="../js/types/gantt.js"></script>
+  <script src="../js/types/markers.js"></script>
+  <script src="../js/types/pie.js"></script>
+  <script src="../js/types/points.js"></script>
+  <script src="../js/types/radar.js"></script>
+  <script src="../js/types/timeline.js"></script>
+  <script src="../js/plugins/crosshair.js"></script>
+  <script src="../js/plugins/datacross.js"></script>
+  <script src="../js/plugins/download.js"></script>
+  <script src="../js/plugins/grid.js"></script>
+  <script src="../js/plugins/hit.js"></script>
+  <script src="../js/plugins/selection.js"></script>
+  <script src="../js/plugins/labels.js"></script>
+  <script src="../js/plugins/legend.js"></script>
+  <script src="../js/plugins/spreadsheet.js"></script>
+  <script src="../js/plugins/titles.js"></script>
+  <script src="../js/plugins/datacursor.js"></script>
+  <script src="../js/DataSource.js"></script>
+  <script src="js/data.js"></script>
+  <script src="../js/Chart.js"></script>
+  <!-- <script src="js/touch.js"></script> -->
+  <script>
+    $(function(){
+      var el = $("#container")[0];
+      $(el).height($(document).height()*0.94);
+      var dataSource = new ArrayDataSource(getData(0), {sampleSize: 30});
+      var data = [{
+        data:dataSource,
+        stock_candles: {
+	      show: true,
+	      candleWidth: 0.6
+	    } 
+      }, {
+        data:dataSource,
+        stock_volumes: {
+          show: true,
+          barWidth: 0.6
+        },
+        yaxis: 2
+      }];
+      var options = {
+	    xaxis: {
+          showLabels: true,
+          tickDecimals:0,
+          tickFormatter: function(v, mm){
+            var
+            vv = parseInt(v),
+            i;
+            var d = dataSource;
+            for(i=0;i<d.length;i++){
+              if(d[i][0] > vv)
+              break;
+              if(d[i][0] == vv){
+                return d[i].slice(-1)[0];
+              }
+            }
+            return "";
+	      }
+        },
+	    yaxis: {
+          showLabels: true,
+	      height: 0.8
+	    },
+        y2axis: {
+          showLabels: true,
+	      stack: true,
+          noTicks: 2
+	    },
+        HtmlText: true,
+        datacross: {
+          mode: "v",
+          color: "#ff0000",
+          hideCursor: false
+        },
+        rotate: 1
+      };
+      chart = new Chart(el, data, options, dataSource);
+    });
+  </script>
+</html>

@@ -4,44 +4,45 @@ var
   D = Flotr.DOM,
   E = Flotr.EventAdapter;
 
-Flotr.addPlugin('cross', {
+Flotr.addPlugin('datacross', {
   options: {
     mode: "",            // => one of null, 'x', 'y' or 'xy'
-    color: '#c1c1c1',      // => cross color
-    hideCursor: false       // => hide the cursor when the cross is shown
+    color: '#c1c1c1',      // => datacross color
+    hideCursor: false       // => hide the cursor when the datacross is shown
   },
   callbacks: {
     'flotr:click': function(pos, e) {
-      if (this.options.cross.mode) {
-        this.cross.drawCross(pos);
+      if (this.options.datacross.mode) {
+        this.datacross.drawDataCross(pos);
       }
     }
   },
   /**   
    * Draws the selection box.
    */
-  drawCross: function(pos) {
+  drawDataCross: function(pos) {
 
     var octx = this.octx,
-      options = this.options.cross,
+      options = this.options.datacross,
       plotOffset = this.plotOffset,
-      vh = this.cross.getVH(),
+      vh = this.datacross.getVH(),
       v = vh.v,
       h = vh.h,
       stack = this.axes.y2.options.stack,
       c = this.hit.closest(pos),
       dataIndex = c.x.dataIndex,
+      xvalue = this.data[0].data[dataIndex][0],
       rotate = this.options.rotate,
-      x = plotOffset.left + Math.round(rotate ? pos.relX : (this.axes.x.d2p(dataIndex) -1)),
-      y = plotOffset.top + Math.round(rotate ? (this.axes.x.d2p(dataIndex) + plotOffset.left - plotOffset.top) : pos.relY);
+      x = plotOffset.left + Math.round(rotate ? pos.relX : (this.axes.x.d2p(xvalue) -1)),
+      y = plotOffset.top + Math.round(rotate ? (this.axes.x.d2p(xvalue) + plotOffset.left - plotOffset.top) : pos.relY);
 
     E.fire(this.el, 'flotr:dataIndex', [dataIndex, this.axes.x, this]);
-    this.cross.hideShowVH();
+    this.datacross.hideShowVH();
     if (!this.options.rotate && (pos.relX < 0 || pos.relY < 0 || pos.relX > this.plotWidth || (pos.relY > this.plotHeight && !this.axes.y2.options.stack)) ||
         this.options.rotate && (pos.relY < this.plotOffset.left || x > this.canvasHeight || pos.relX < -plotOffset.left + 1 || pos.relY + plotOffset.top > this.canvasWidth)) {
 
       this.el.style.cursor = null;
-      D.removeClass(this.el, 'flotr-cross');
+      D.removeClass(this.el, 'flotr-datacross');
       D.hide(v);
       D.hide(h);
       return; 
@@ -49,12 +50,11 @@ Flotr.addPlugin('cross', {
     
     if (options.hideCursor) {
       this.el.style.cursor = 'none';
-      D.addClass(this.el, 'flotr-cross');
+      D.addClass(this.el, 'flotr-datacross');
     }
     
     if (options.mode.indexOf('v') != -1) {
       if(this.options.rotate){
-        //TODO
         v.style.top = y + "px";
       } else {
         v.style.left = x + "px";
@@ -71,12 +71,12 @@ Flotr.addPlugin('cross', {
   },
 
   getVH: function(){
-    if(!this.cross.vh){
+    if(!this.datacross.vh){
       var
       v = D.create("div"),
       h = D.create("div"),
-      options = this.options.cross,
-      color = this.cross.options.color,
+      options = this.options.datacross,
+      color = this.datacross.options.color,
       rotate = this.options.rotate,
       stack = this.axes.y2.options.stack;
       if(rotate){
@@ -116,16 +116,16 @@ Flotr.addPlugin('cross', {
       
       D.insert(this.el, v);
       D.insert(this.el, h);
-      this.cross.vh = {v: v,h: h};
-      this.cross.hideShowVH();
+      this.datacross.vh = {v: v,h: h};
+      this.datacross.hideShowVH();
     }
-    return this.cross.vh;
+    return this.datacross.vh;
   },
 
   hideShowVH: function(){
     var
-    options = this.options.cross,
-    vh = this.cross.vh,
+    options = this.options.datacross,
+    vh = this.datacross.vh,
     v = vh.v,
     h = vh.h;
     

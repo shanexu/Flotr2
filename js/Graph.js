@@ -252,9 +252,9 @@ Graph.prototype = {
 
       context.save();
       context.translate(this.plotOffset.left, this.plotOffset.top);
-      var sortedSeries = this.series.sort(function(a,b){return a.yaxis.options.stack - a.yaxis.options.stack;});
-      for (i = 0; i < sortedSeries.length; i++) {
-        var serie = sortedSeries[i];
+      this.series.sort(function(a,b){return a.yaxis.options.stack - a.yaxis.options.stack;});
+      for (i = 0; i < this.series.length; i++) {
+        var serie = this.series[i];
         if (!serie.hide) {
           if (serie.yaxis.options.stack){
             context.restore();
@@ -348,7 +348,7 @@ Graph.prototype = {
    * @return {Object} Object with coordinates of the mouse.
    */
   getEventPosition: function (e){
-//TODO when rotate
+
     var
       d = document,
       b = d.body,
@@ -365,23 +365,21 @@ Graph.prototype = {
       r = D.position(this.overlay);
       rx = pointer.x - r.left - plotOffset.left;
       ry = pointer.y - r.top - plotOffset.top;
+      rrx = rx;
+      rry = ry;
       if(this.options.rotate){
         rrx = pointer.y - r.top - plotOffset.left;
         rry = this.canvasHeight - plotOffset.top - (pointer.x - r.left - plotOffset.left);
-      } else {
-        rrx = rx;
-        rry = ry;
       }
     } else {
       r = this.overlay.getBoundingClientRect();
       rx = e.clientX - r.left - plotOffset.left - b.scrollLeft - de.scrollLeft;
       ry = e.clientY - r.top - plotOffset.top - b.scrollTop - de.scrollTop;
+      rrx = rx;
+      rry = ry;
       if(this.options.rotate){
         rrx = e.clientY - r.top - plotOffset.left - b.scrollTop - de.scrollTop;
         rry = this.canvasHeight - plotOffset.top - (e.clientX - r.left - b.scrollLeft - de.scrollLeft);
-      } else {
-        rrx = rx;
-        rry = ry;
       }
     }
 
@@ -463,7 +461,7 @@ Graph.prototype = {
     }, this);
     E.observe(document, 'mouseup', this.mouseUpHandler);
     E.observe(document, 'mousemove', this.mouseDownMoveHandler);
-    E.fire(this.el, 'flotr:mousedown', [event, this]);
+    E.fire(this.el, 'flotr:mousedown', [event, this.getEventPosition(event), this]);
     this.ignoreClick = false;
   },
   drawTooltip: function(content, x, y, options) {
@@ -610,7 +608,7 @@ Graph.prototype = {
           this.multitouches = e.touches;
         }
 
-        E.fire(el, 'flotr:mousedown', [event, this]);
+        E.fire(el, 'flotr:mousedown', [event, this.getEventPosition(e), this]);
         this.observe(document, 'touchend', touchendHandler);
       }, this));
 
@@ -751,6 +749,7 @@ Graph.prototype = {
    */
   _initOptions: function(opts){
     var options = flotr.clone(flotr.defaultOptions);
+    this.originalOptions = opts;
     options.x2axis = _.extend(_.clone(options.xaxis), options.x2axis);
     options.y2axis = _.extend(_.clone(options.yaxis), options.y2axis);
     this.options = flotr.merge(opts || {}, options);
