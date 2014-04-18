@@ -2,13 +2,13 @@
 Flotr.addType('stock_volumes', {
 
   options: {
+    shadowSize: 0,
     show: false,           // => setting to true will show bars, false will hide
     lineWidth: 1,          // => in pixels
     barWidth: 0.6,           // => in units of the x axis
-    fill: true,            // => true to fill the area from the line to the x axis, false for (transparent) no fill
 	upFillColor: '#ff413a',// => up sticks fill color
     downFillColor: '#15a645',// => down sticks fill color
-    fillOpacity: 0.90      // => opacity of the fill color, set to 1 for a solid fill, 0 hides the fill
+    fillOpacity: 1.0      // => opacity of the fill color, set to 1 for a solid fill, 0 hides the fill
   },
 
   draw : function (options) {
@@ -22,7 +22,6 @@ Flotr.addType('stock_volumes', {
     // @TODO linewidth not interpreted the right way.
     context.lineWidth = options.lineWidth;
     context.strokeStyle = options.color;
-    if (options.fill) context.fillStyle = options.fillStyle;
     
     this.plot(options);
 
@@ -37,7 +36,7 @@ Flotr.addType('stock_volumes', {
       shadowSize      = options.shadowSize,
       lineWidth       = options.lineWidth,
       i, geometry, left, top, width, height,
-	  datum, open, close, color;
+	  datum, open, close, color, datum0, open0, close0, fill;
 
     if (data.length < 1) return;
 
@@ -53,6 +52,7 @@ Flotr.addType('stock_volumes', {
 	  datum   = data[i];
 	  open    = datum[1];
       close   = datum[4];
+      datum0  = data[i-1];
 
 	  color = options[open > close ? 'downFillColor' : 'upFillColor'];
 
@@ -62,7 +62,12 @@ Flotr.addType('stock_volumes', {
         context.fillRect(left + shadowSize, top + shadowSize, width, height);
         context.restore();
       }
-      if (options.fill) {
+      if(datum0){
+        open0 = datum0[1];
+        close0 = datum0[4];
+        fill = open > close ? ( close <= close0 && close <= open0 ) : (close >= close0 && close >= open0);
+      }
+      if (fill) {
 		context.save();
 		context.globalAlpha = options.fillOpacity;
 		context.fillStyle = color;

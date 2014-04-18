@@ -71,35 +71,34 @@
     $(function(){
       var el = $("#container")[0];
       $(el).height($(document).height()*1);
-      dataSource = new ArrayDataSource(KLINE_DATA_ARRAY, {length: 50, maxSampleSize:300, minSampleSize:10});
+      // dataSource = new ArrayDataSource(KLINE_DATA_ARRAY, {sampleSize: 50, maxSampleSize:300, minSampleSize:10});
+      dataSource = new ArrayDataSource(TREND_DATA_ARRAY, {length: 240, maxSampleSize:300, minSampleSize:10});
       var data = [{
         data:dataSource,
-        stock_candles: {
+        lines: {
+          fill:true,
 	      show: true,
-	      candleWidth: 0.6
-	    }
+	    },
       }, {
         data:dataSource,
-        stock_volumes: {
+        bars: {
           show: true,
           barWidth: 0.6
         },
+        yi: 2,
         yaxis: 2
       }];
       var options = {
-        getDataIndexValue: function(dataIndex){
-          return this.data[0].data[dataIndex][4];
-        },
 	    xaxis: {
           showLabels: true,
           tickDecimals:0,
-          tickFormatter: function(v){
-            var
-            v = parseInt(v),
-            d = dataSource[v];
-            return d[d.length - 1];
-            
-          }
+          /* tickFormatter: function(v){
+          var
+          v = parseInt(v),
+          d = dataSource[v];
+          return d[d.length - 1];
+          
+          } */
         },
 	    yaxis: {
           tickDecimals:2,
@@ -110,15 +109,13 @@
           showLabels: true,
 	      stack: true,
           noTicks: 2,
-          tickFormatter: function(v){
-            return v/10000 + "万";
-          }
 	    },
         HtmlText: true,
         datacross: {
           mode: "vh",
           color: "#ffffff",
-          hideCursor: false
+          hideCursor: false,
+          drawPoint: true
         },
         rotate: 1,
         grid: {

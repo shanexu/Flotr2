@@ -67,6 +67,8 @@ Flotr.defaultOptions = {
   y2axis: {
     titleAngle: 270
   },
+  labels: {
+  },
   grid: {
     color: '#545454',      // => primary color used for outline and labels
     backgroundColor: null, // => null for transparent, else color

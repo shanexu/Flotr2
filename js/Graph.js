@@ -59,6 +59,12 @@ function observe (object, name, callback) {
 }
 
 Graph.prototype = {
+  getDataIndexValue: function(dataIndex){
+    if(_.isFunction(this.options.getDataIndexValue)){
+      return this.options.getDataIndexValue.apply(this, [dataIndex]);
+    }
+    return this.data[0].data[dataIndex][1];
+  },
 
   destroy: function () {
     E.fire(this.el, 'flotr:destroy');
@@ -329,7 +335,9 @@ Graph.prototype = {
         xScale      : xaxis.d2p,
         yScale      : yaxis.d2p,
         xInverse    : xaxis.p2d,
-        yInverse    : yaxis.p2d
+        yInverse    : yaxis.p2d,
+        yi          : series.yi,
+        xi          : series.xi
       };
 
     options = flotr.merge(type, options);
@@ -597,6 +605,7 @@ Graph.prototype = {
         if (!movement) {
           this.clickHandler(e);
         }
+        E.fire(el, 'flotr:touchend', [event, this]);
       }, this);
 
       this.observe(this.overlay, 'touchstart', _.bind(function (e) {
@@ -609,6 +618,7 @@ Graph.prototype = {
         }
 
         E.fire(el, 'flotr:mousedown', [event, this.getEventPosition(e), this]);
+        E.fire(el, 'flotr:touchstart', [event, this]);
         this.observe(document, 'touchend', touchendHandler);
       }, this));
 
@@ -630,6 +640,7 @@ Graph.prototype = {
           }
         }
         this.lastMousePos = pos;
+        E.fire(el, 'flotr:touchmove', [event, this]);
       }, this));
 
     } else {
@@ -691,7 +702,7 @@ Graph.prototype = {
     this.canvasHeight = size.height;
     this.canvasWidth = size.width;
     this.textEnabled = !!this.ctx.drawText || !!this.ctx.fillText; // Enable text functions
-    if(this.options.rotate === 1){
+    if(this.options.rotate){
       this.canvasHeight = size.width;
       this.canvasWidth = size.height;
       this.ctx.transform(0, 1, -1, 0, size.width, 0);

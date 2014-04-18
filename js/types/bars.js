@@ -54,7 +54,7 @@ Flotr.addType('bars', {
 
     for (i = 0; i < data.length; i++) {
 
-      geometry = this.getBarGeometry(data[i][0], data[i][1], options);
+      geometry = this.getBarGeometry(data[i][options.xi], data[i][options.yi], options);
       if (geometry === null) continue;
 
       left    = geometry.left;
@@ -151,7 +151,7 @@ Flotr.addType('bars', {
       geometry, i;
 
     for (i = data.length; i--;) {
-      geometry = this.getBarGeometry(data[i][0], data[i][1], options);
+      geometry = this.getBarGeometry(data[i][options.xi], data[i][options.yi], options);
       if (
         // Height:
         (
@@ -163,8 +163,8 @@ Flotr.addType('bars', {
         // Width:
         (Math.abs(left - geometry.left) < width)
       ) {
-        n.x = data[i][0];
-        n.y = data[i][1];
+        n.x = data[i][options.xi];
+        n.y = data[i][options.yi];
         n.index = i;
         n.seriesIndex = options.index;
       }

@@ -8,20 +8,34 @@ Flotr.addPlugin('datacross', {
   options: {
     mode: "",            // => one of null, 'x', 'y' or 'xy'
     color: '#c1c1c1',      // => datacross color
-    hideCursor: false       // => hide the cursor when the datacross is shown
+    pointColor: '#00a8f0',
+    hideCursor: false,       // => hide the cursor when the datacross is shown,
+    drawPoint: false
   },
   callbacks: {
     'flotr:click': function(pos, e) {
       if (this.options.datacross.mode) {
+        this.datacross.clearDataCross(pos);
         this.datacross.drawDataCross(pos);
       }
     }
   },
+
+  clearDataCross: function(pos){
+    var x, y,
+        context = this.octx;
+    if(this.datacross.prevXY){
+      console.log("hello");
+      x = this.datacross.prevXY.x;
+      y = this.datacross.prevXY.y;
+      context.clearRect(x - 5, y - 5, 10, 10);
+    }
+  },
+  
   /**   
    * Draws the selection box.
    */
   drawDataCross: function(pos) {
-
     var octx = this.octx,
       options = this.options.datacross,
       plotOffset = this.plotOffset,
@@ -35,9 +49,7 @@ Flotr.addPlugin('datacross', {
       rotate = this.options.rotate,
       x = plotOffset.left + Math.round(rotate ? pos.relX : (this.axes.x.d2p(xvalue) -1)),
       y = plotOffset.top + Math.round(rotate ? (this.axes.x.d2p(xvalue) + plotOffset.left - plotOffset.top) : pos.relY);
-
     E.fire(this.el, 'flotr:dataIndex', [dataIndex, this.axes.x, this]);
-    this.datacross.hideShowVH();
     if (!this.options.rotate && (pos.relX < 0 || pos.relY < 0 || pos.relX > this.plotWidth || (pos.relY > this.plotHeight && !this.axes.y2.options.stack)) ||
         this.options.rotate && (pos.relY < this.plotOffset.left || x > this.canvasHeight || pos.relX < -plotOffset.left + 1 || pos.relY + plotOffset.top > this.canvasWidth)) {
 
@@ -58,16 +70,35 @@ Flotr.addPlugin('datacross', {
         v.style.top = y + "px";
       } else {
         v.style.left = x + "px";
+
       }
     }
     
     if (options.mode.indexOf('h') != -1) {
+      var p = Math.round(this.axes.y.d2p(this.getDataIndexValue(dataIndex)));
       if(this.options.rotate){
-        h.style.left = x + "px";
+        h.style.left = (this.canvasHeight - plotOffset.top - 2  - p) + "px";
       } else {
+        y = p + this.plotOffset.top + 1;
         h.style.top = y + "px";
       }
     }
+    
+    if(options.drawPoint){
+      var x1 = rotate ? y : x;
+      var y1 = rotate ? p + 2 : y;
+
+      octx.save();
+      octx.strokeStyle = options.pointColor || options.color;
+      octx.lineWidth = 3;
+      octx.beginPath();
+      octx.arc(x1, y1, 3, 0, 2 * Math.PI, false);
+      octx.stroke();
+      octx.closePath();
+      this.datacross.hideShowVH();
+      this.datacross.prevXY = {x:x1, y:y1};
+    }
+    
   },
 
   getVH: function(){
@@ -76,7 +107,7 @@ Flotr.addPlugin('datacross', {
       v = D.create("div"),
       h = D.create("div"),
       options = this.options.datacross,
-      color = this.datacross.options.color,
+      color = options.color,
       rotate = this.options.rotate,
       stack = this.axes.y2.options.stack;
       if(rotate){

@@ -1,14 +1,14 @@
 /** Stock_Candles **/
 Flotr.addType('stock_candles', {
   options: {
+    shadowSize: 0,
     show: false,           // => setting to true will show candle sticks, false will hide
     lineWidth: 1,          // => in pixels
     wickLineWidth: 1,      // => in pixels
     candleWidth: 0.6,      // => in units of the x axis
-    fill: true,            // => true to fill the area from the line to the x axis, false for (transparent) no fill
     upFillColor: '#ff413a',// => up sticks fill color
     downFillColor: '#15a645',// => down sticks fill color
-    fillOpacity: 0.90      // => opacity of the fill color, set to 1 for a solid fill, 0 hides the fill
+    fillOpacity: 1.0      // => opacity of the fill color, set to 1 for a solid fill, 0 hides the fill
   },
 
   draw : function (options) {
@@ -43,7 +43,7 @@ Flotr.addType('stock_candles', {
       datum, x, y,
       open, high, low, close,
       left, right, bottom, top, bottom2, top2, reverseLines,
-      i;
+      i,fill, datum0, open0, close0;
 
     if (data.length < 1) return;
 
@@ -60,7 +60,8 @@ Flotr.addType('stock_candles', {
       top     = yScale(high);
       bottom2 = yScale(Math.min(open, close));
       top2    = yScale(Math.max(open, close));
-
+      datum0  = data[i-1];
+      
       /*
       // TODO skipping
       if(right < xa.min || left > xa.max || top < ya.min || bottom > ya.max)
@@ -68,9 +69,13 @@ Flotr.addType('stock_candles', {
       */
 
       color = options[open > close ? 'downFillColor' : 'upFillColor'];
-
+      if(datum0){
+        open0 = datum0[1];
+        close0 = datum0[4];
+        fill = open > close ? ( close <= close0 && close <= open0 ) : (close >= close0 && close >= open0);
+      }
       // Fill the candle.
-      if (options.fill) {
+      if (fill) {
         context.fillStyle = 'rgba(0,0,0,0.05)';
         context.fillRect(left + shadowSize, top2 + shadowSize, right - left, bottom2 - top2);
         context.save();

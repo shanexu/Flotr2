@@ -4,37 +4,35 @@
 (function () {
   var
   _     = Flotr._;
+
+  var init = function(options){
+    Flotr.merge(options, this);
+    this.maxSampleSize = this.maxSampleSize ? this.maxSampleSize : this.length * 2;
+    this.minSampleSize = this.minSampleSize ? this.minSampleSize : this.length / 2;
+  };
+
+  var sampleSize = function(s){
+    if (arguments.length > 0) {
+      var min = this.minSampleSize,
+          max = this.maxSampleSize;
+      s = s < min ? min : (s > max ? max : s);
+      this.length = s;
+    }
+    return this.length;
+  };
+
   /**
    * DataSource.
    * @param {RawDataSource} ds - raw data source
    * @param {int} ss - sample size
    */
   DataSource = function(options){
-    this.init = function(options){
-      Flotr.merge(options || {}, this);
-      this.setSampleSize(this.sampleSize);
-    };
-    this.move = function(){
-      return this;
-    };
-    this.setSampleSize = function(sampleSize){
-      this.length = sampleSize;
-    };
-    this.sampleSize = 50;
+    this.sampleSize = sampleSize; 
+    this.init = init;
     this.init(options);
   };
 
-
-  DataSource.prototype = {
-    move: function(step, callback){
-    },
-    sampleSize: 50,
-    init: function(options){
-      Flotr.merge(options, this);
-    }
-  };
-
-  DataSource.prototype = Array.Prototype;
+  DataSource.prototype = new Array();
 
   ArrayDataSource = function(array, opts){
     this.cursor = 0;
@@ -50,22 +48,24 @@
       s,e;
       step = step || 0;
       s = this.cursor + step;
-      e = this.cursor + step + this.sampleSize;
+      e = this.cursor + step + this.length;
       
       if(s < 0){
         s = 0;
-        e = s + this.sampleSize;
+        e = s + this.length;
       }
       if(e > length) {
         e = length;
-        s = length - this.sampleSize;
+        s = length - this.length;
       }
       
-      if(s !== this.cursor || this[0] == null){
+      if(s !== this.cursor || this[this.length - 1] == null){
         this.cursor = s;
         var data = this.data.slice(s, e);
         for(var i = s ; i<e; i++){
-          this[i-s] = this.data[i];
+          var d = this.data[i];
+          d[0] = i-s;
+          this[i-s] = d;
         }
       } 
       if(_.isFunction(callback)) callback(this);

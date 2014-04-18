@@ -79,7 +79,7 @@ Flotr.addPlugin('labels', {
       div = D.create('div');
       D.setStyles(div, {
         fontSize: 'smaller',
-        color: options.grid.color
+        color: options.labels.color || options.grid.color
       });
       div.className = 'flotr-labels';
       if(this.options.rotate){
@@ -98,7 +98,7 @@ Flotr.addPlugin('labels', {
         style, offset;
 
       style = {
-        color        : axis.options.color || options.grid.color,
+        color        : axis.options.color || options.labels.color || options.grid.color,
         angle        : Flotr.toRad(axis.options.labelsAngle),
         textBaseline : 'middle'
       };
@@ -130,7 +130,7 @@ Flotr.addPlugin('labels', {
         style, offset;
 
       style = {
-        color        : axis.options.color || options.grid.color,
+        color        : axis.options.color || options.labels.color ||options.grid.color,
         textAlign    : textAlign,
         textBaseline : textBaseline,
         angle : Flotr.toRad(axis.options.labelsAngle)

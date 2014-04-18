@@ -9,6 +9,8 @@ var
 
 function Series (o) {
   _.extend(this, o);
+  this.xi = this.xi || 0;
+  this.yi = this.yi || 1;
 }
 
 Series.prototype = {
@@ -24,13 +26,16 @@ Series.prototype = {
       ymax = -Number.MAX_VALUE,
       xused = false,
       yused = false,
+      xi = this.xi,
+      yi = this.yi,
       x, y, i;
 
     if (length < 0 || this.hide) return false;
 
     for (i = 0; i < length; i++) {
-      x = data[i][0];
-      y = data[i][1];
+
+      x = data[i][xi];
+      y = data[i][yi];
       if (x !== null) {
         if (x < xmin) { xmin = x; xused = true; }
         if (x > xmax) { xmax = x; xused = true; }
