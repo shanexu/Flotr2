@@ -46,14 +46,14 @@
       }
     });
 
-    graph = drawGraph();
+    drawGraph();
     
     this.getGraph = function(){
       return graph;
     };
 
     this.redraw = function(){
-      graph = drawGraph();
+      drawGraph();
     };
 
   };
