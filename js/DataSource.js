@@ -32,7 +32,7 @@
     this.init(options);
   };
 
-  DataSource.prototype = new Array();
+  DataSource.prototype = [];
 
   ArrayDataSource = function(array, opts){
     this.cursor = 0;
@@ -59,7 +59,7 @@
         s = length - this.length;
       }
       
-      if(s !== this.cursor || this[this.length - 1] == null){
+      if(s !== this.cursor || _.isNull(this[this.length - 1]) || _.isUndefined(this[this.length - 1])){
         this.cursor = s;
         var data = this.data.slice(s, e);
         for(var i = s ; i<e; i++){

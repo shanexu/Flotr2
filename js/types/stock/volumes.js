@@ -1,6 +1,6 @@
-/** Stock_Volumes **/
+/* vim: set et sw=2: */
 Flotr.addType('stock_volumes', {
-
+/** Stock_Volumes **/
   options: {
     shadowSize: 0,
     show: false,           // => setting to true will show bars, false will hide
@@ -36,7 +36,7 @@ Flotr.addType('stock_volumes', {
       shadowSize      = options.shadowSize,
       lineWidth       = options.lineWidth,
       i, geometry, left, top, width, height,
-	  datum, open, close, color, datum0, open0, close0, fill;
+      datum, open, close, color, datum0, open0, close0, fill;
 
     if (data.length < 1) return;
 
@@ -44,17 +44,17 @@ Flotr.addType('stock_volumes', {
 
       geometry = this.getBarGeometry(data[i][0], data[i][5], options);
       if (geometry === null) continue;
-	  
+
       left    = geometry.left;
       top     = geometry.top;
       width   = geometry.width;
       height  = geometry.height;
-	  datum   = data[i];
-	  open    = datum[1];
+      datum   = data[i];
+      open    = datum[1];
       close   = datum[4];
       datum0  = data[i-1];
 
-	  color = options[open > close ? 'downFillColor' : 'upFillColor'];
+      color = options[open > close ? 'downFillColor' : 'upFillColor'];
 
       if (shadowSize) {
         context.save();
@@ -68,17 +68,17 @@ Flotr.addType('stock_volumes', {
         fill = open > close ? ( close <= close0 && close <= open0 ) : (close >= close0 && close >= open0);
       }
       if (fill) {
-		context.save();
-		context.globalAlpha = options.fillOpacity;
-		context.fillStyle = color;
-		context.fillRect(left, top + lineWidth, width, height);
-		context.restore();
-	  }
+        context.save();
+        context.globalAlpha = options.fillOpacity;
+        context.fillStyle = color;
+        context.fillRect(left, top + lineWidth, width, height);
+        context.restore();
+      }
       if (options.lineWidth) {
-		context.save();
-		context.strokeStyle = color;
+        context.save();
+        context.strokeStyle = color;
         context.strokeRect(left, top + lineWidth, width, height);
-		context.restore();
+        context.restore();
       }
     }
   },
@@ -206,41 +206,32 @@ Flotr.addType('stock_volumes', {
   },
 
   extendXRange : function (axis, data, options, bars) {
-	if (axis.options.max === null) {
+    if (!_.isNumber(axis.options.max)) {
       axis.max = Math.max(axis.datamax + 0.5, axis.max);
       axis.min = Math.min(axis.datamin - 0.5, axis.min);
     }
   },
 
   extendYRange : function (axis, data, options, bars) {
-	if (axis.options.max === null) {
+    if (!_.isNumber(axis.options.max)) {
       var
-	  length = data.length,
-	  ymin = Number.MAX_VALUE,
-	  ymax = Number.MIN_VALUE,
-	  o = axis.options,
-	  y, i;
-	  for (i = 0; i < length; i++){
-	  	y = data[i][5];
-	  	ymin = y < ymin ? y : ymin;
-	  	ymax = y > ymax ? y : ymax;
-	  }
-	  axis.datamin = ymin;
-	  axis.datamax = ymax;
-	  axis.min = ymin*0.95;
-	  axis.max = ymax*1.05;
-	  axis.tickSize = Flotr.getTickSize(o.noTicks, axis.min, axis.max, o.tickDecimals);
+      length = data.length,
+      ymin = Number.MAX_VALUE,
+      ymax = Number.MIN_VALUE,
+      o = axis.options,
+      y, i;
+      for (i = 0; i < length; i++){
+        y = data[i][5];
+        ymin = y < ymin ? y : ymin;
+        ymax = y > ymax ? y : ymax;
+      }
+      axis.datamin = ymin;
+      axis.datamax = ymax;
+      axis.min = ymin*0.95;
+      axis.max = ymax*1.05;
+      axis.tickSize = Flotr.getTickSize(o.noTicks, axis.min, axis.max, o.tickDecimals);
     }
   }
 
 });
-
-
-
-
-
-
-
-
-
 

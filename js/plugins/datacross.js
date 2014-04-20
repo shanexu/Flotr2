@@ -48,7 +48,8 @@ Flotr.addPlugin('datacross', {
       xvalue = this.data[0].data[dataIndex][0],
       rotate = this.options.rotate,
       x = plotOffset.left + Math.round(rotate ? pos.relX : (this.axes.x.d2p(xvalue) -1)),
-      y = plotOffset.top + Math.round(rotate ? (this.axes.x.d2p(xvalue) + plotOffset.left - plotOffset.top) : pos.relY);
+      y = plotOffset.top + Math.round(rotate ? (this.axes.x.d2p(xvalue) + plotOffset.left - plotOffset.top) : pos.relY),
+      p = Math.round(this.axes.y.d2p(this.getDataIndexValue(dataIndex)));
     E.fire(this.el, 'flotr:dataIndex', [dataIndex, this.axes.x, this]);
     if (!this.options.rotate && (pos.relX < 0 || pos.relY < 0 || pos.relX > this.plotWidth || (pos.relY > this.plotHeight && !this.axes.y2.options.stack)) ||
         this.options.rotate && (pos.relY < this.plotOffset.left || x > this.canvasHeight || pos.relX < -plotOffset.left + 1 || pos.relY + plotOffset.top > this.canvasWidth)) {
@@ -75,7 +76,6 @@ Flotr.addPlugin('datacross', {
     }
     
     if (options.mode.indexOf('h') != -1) {
-      var p = Math.round(this.axes.y.d2p(this.getDataIndexValue(dataIndex)));
       if(this.options.rotate){
         h.style.left = (this.canvasHeight - plotOffset.top - 2  - p) + "px";
       } else {
