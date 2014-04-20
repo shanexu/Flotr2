@@ -1,0 +1,107 @@
+<!Doctype html>
+<html>
+  <head>
+    <style type="text/css">
+      body {
+        margin: 0px;
+        padding: 0px;
+      }
+      #container {
+        width : 100%;
+        margin: 0;
+        background-color: #101417;
+        /* border: solid 1px #ff0000; */
+      }
+    </style>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+    <div id="container"></div>
+    <div style="width: 90%; margin: 8px auto;">
+      <button id="rotateBtn">rotate</button>
+    </div>
+  </body>
+  <script src="lib/jquery-2.1.0.js"></script>
+  <script src="js/requestanimationframe.js"></script>
+  <script src="js/hammer.js"></script>
+  <script src="../lib/bean.js"></script>
+  <script src="../lib/underscore.js"></script>
+  <script src="../build/flotr2.js"></script>
+  <script src="../js/DataSource.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/data1.js"></script>
+  <script src="js/dataSource1.js"></script>
+  <script>
+    document.body.addEventListener('touchmove', function(event) {
+      event.preventDefault();
+    }, false);
+    $(function(){
+      var el = $("#container")[0];
+      $(el).height($(document).height()*1);
+      dataSource = new ArrayDataSource(KLINE_DATA_ARRAY, {length: 50, maxSampleSize:300, minSampleSize:10});
+      var data = [{
+        data:dataSource,
+        stock_candles: {
+	      show: true,
+	      candleWidth: 0.6
+	    }
+      }, {
+        data:dataSource,
+        stock_volumes: {
+          show: true,
+          barWidth: 0.6
+        },
+        yaxis: 2
+      }];
+      var options = {
+        getDataIndexValue: function(dataIndex){
+          return this.data[0].data[dataIndex][4];
+        },
+	    xaxis: {
+          showLabels: true,
+          tickDecimals:0,
+          tickFormatter: function(v){
+            var
+            v = parseInt(v),
+            d = dataSource[v];
+            return d[d.length - 1];
+            
+          }
+        },
+	    yaxis: {
+          tickDecimals:2,
+          showLabels: true,
+	      height: 0.8
+	    },
+        y2axis: {
+          showLabels: true,
+	      stack: true,
+          noTicks: 2,
+          tickFormatter: function(v){
+            return v/10000 + "万";
+          }
+	    },
+        HtmlText: true,
+        datacross: {
+          mode: "vh",
+          color: "#ffffff",
+          hideCursor: false
+        },
+        rotate: 1,
+        grid: {
+          tickColor: "#232f38",
+          color: "#232f38"
+        },
+        labels: {
+          color: "#899197"
+        }
+      };
+      chart = new Chart(el, data, options, dataSource);
+      $("#rotateBtn").click(function(){
+        options.rotate = !options.rotate;
+        chart.redraw();
+      });
+    });
+  </script>
+</html>
