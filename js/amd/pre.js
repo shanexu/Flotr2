@@ -1,15 +1,15 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['bean', 'underscore'], function (bean, _) {
+        define(['bean', 'underscore', 'hammer'], function (bean, _, hammer) {
             // Also create a global in case some scripts
             // that are loaded still are looking for
             // a global even when an AMD loader is in use.
-            return (root.Flotr = factory(bean, _));
+            return (root.Flotr = factory(bean, _, hammer));
         });
     } else {
         // Browser globals
-        root.Flotr = factory(root.bean, root._);
+        root.Flotr = factory(root.bean, root._, root.hammer);
     }
-}(this, function (bean, _) {
+}(this, function (bean, _, hammer) {
 

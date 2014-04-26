@@ -72,7 +72,8 @@
       return this;
     }
   });
-
+  Flotr.DataSource = DataSource;
+  Flotr.ArrayDataSource = ArrayDataSource;
 })();
 
 

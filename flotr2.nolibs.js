@@ -15,6 +15,7 @@ var
 Flotr = {
   _: _,
   bean: bean,
+  hammer: hammer,
   isIphone: /iphone/i.test(navigator.userAgent),
   isIE: (navigator.appVersion.indexOf("MSIE") != -1 ? parseFloat(navigator.appVersion.split("MSIE")[1]) : false),
   
@@ -2314,7 +2315,8 @@ Flotr.Series = Series;
       return this;
     }
   });
-
+  Flotr.DataSource = DataSource;
+  Flotr.ArrayDataSource = ArrayDataSource;
 })();
 
 
@@ -2324,8 +2326,9 @@ Flotr.Series = Series;
   D     = Flotr.DOM,
   E     = Flotr.EventAdapter,
   _     = Flotr._,
+  H     = Flotr.hammer,
   flotr = Flotr;
-
+  
   Chart = function(el, data, options, dataSource){
     this.el = el;
     this.data = data;
@@ -2348,7 +2351,7 @@ Flotr.Series = Series;
       });
     };
 
-    Hammer(el).on("pinch", function(event) {
+    H(el).on("pinch", function(event) {
       var sc = Math.abs(Math.log(event.gesture.scale));
       if (sc > 0.2 && sc < 0.4){
         var s = Math.round(1 / event.gesture.scale * dataSource.sampleSize());
@@ -2378,6 +2381,7 @@ Flotr.Series = Series;
     };
 
   };
+  flotr.Chart = Chart;
 })();
 
 
