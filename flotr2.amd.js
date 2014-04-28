@@ -1,17 +1,17 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['bean', 'underscore', 'hammer'], function (bean, _, hammer) {
+        define(['bean', 'underscore', 'hammer'], function (bean, _, Hammer) {
             // Also create a global in case some scripts
             // that are loaded still are looking for
             // a global even when an AMD loader is in use.
-            return (root.Flotr = factory(bean, _, hammer));
+            return (root.Flotr = factory(bean, _, Hammer));
         });
     } else {
         // Browser globals
         root.Flotr = factory(root.bean, root._, root.hammer);
     }
-}(this, function (bean, _, hammer) {
+}(this, function (bean, _, Hammer) {
 
 /**
  * Flotr2 (c) 2012 Carl Sutherland
@@ -30,7 +30,7 @@ var
 Flotr = {
   _: _,
   bean: bean,
-  hammer: hammer,
+  hammer: Hammer,
   isIphone: /iphone/i.test(navigator.userAgent),
   isIE: (navigator.appVersion.indexOf("MSIE") != -1 ? parseFloat(navigator.appVersion.split("MSIE")[1]) : false),
   

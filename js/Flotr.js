@@ -15,7 +15,7 @@ var
 Flotr = {
   _: _,
   bean: bean,
-  hammer: hammer,
+  hammer: Hammer,
   isIphone: /iphone/i.test(navigator.userAgent),
   isIE: (navigator.appVersion.indexOf("MSIE") != -1 ? parseFloat(navigator.appVersion.split("MSIE")[1]) : false),
   
