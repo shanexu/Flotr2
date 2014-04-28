@@ -25,6 +25,9 @@
   <script src="lib/jquery-2.1.0.js"></script>
   <script src="js/requestanimationframe.js"></script>
   <script src="js/hammer.js"></script>
+  <script>
+    hammer = Hammer;
+  </script>
   <script src="../lib/bean.js"></script>
   <script src="../lib/underscore.js"></script>
   <script src="../js/Flotr.js"></script>
@@ -72,7 +75,7 @@
       var el = $("#container")[0];
       $(el).height($(document).height()*1);
       // dataSource = new ArrayDataSource(KLINE_DATA_ARRAY, {sampleSize: 50, maxSampleSize:300, minSampleSize:10});
-      dataSource = new ArrayDataSource(TREND_DATA_ARRAY, {length: 240, maxSampleSize:300, minSampleSize:10});
+      dataSource = new ArrayDataSource(TREND_DATA_ARRAY.slice(100), {length: 240, maxSampleSize:300, minSampleSize:10});
       var data = [{
         data:dataSource,
         lines: {

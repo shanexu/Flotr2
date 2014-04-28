@@ -49,7 +49,7 @@
       step = step || 0;
       s = this.cursor + step;
       e = this.cursor + step + this.length;
-      
+
       if(s < 0){
         s = 0;
         e = s + this.length;
@@ -58,7 +58,11 @@
         e = length;
         s = length - this.length;
       }
-      
+      if (s < 0) {
+        s = 0;
+      }
+      this.length = e - s;
+
       if(s !== this.cursor || _.isNull(this[this.length - 1]) || _.isUndefined(this[this.length - 1])){
         this.cursor = s;
         var data = this.data.slice(s, e);
