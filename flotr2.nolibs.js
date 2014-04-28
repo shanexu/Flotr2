@@ -1342,7 +1342,10 @@ Graph.prototype = {
       axes = this.axes,
       plotOffset = this.plotOffset,
       lastMousePos = this.lastMousePos,
-      pointer = E.eventPointer(e),
+      pointer = E.eventPointer(e);
+    if(_.isFunction(this.options.adjustPosition))
+      this.options.adjustPosition.call(this, pointer);
+    var
       dx = pointer.x - lastMousePos.pageX,
       dy = pointer.y - lastMousePos.pageY,
       r, rx, ry, rrx, rry;
