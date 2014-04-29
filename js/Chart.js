@@ -13,10 +13,18 @@
     this.dataSource = dataSource;
     var graph = null;
     var rid = null;
+    var move = false;
+    this.move = function(value){
+      if(!_.isUndefined(value)){
+        move = value;
+      }
+      return move;
+    };
     var drawGraph = function(){
       graph = Flotr.draw(el, data, options);
       
       graph.observe(el, "flotr:datacursor", function(dx){
+        if(!move) return;
         dataSource.move(dx, function(){
           if(rid){
             cancelAnimationFrame(rid);
@@ -28,7 +36,17 @@
       });
     };
 
-    H(el).on("pinch", function(event) {
+    var pinch = false;
+
+    this.pinch = function(value){
+      if(!_.isUndefined(value)){
+        pinch = value;
+      }
+      return pinch;
+    };
+
+    H(el).on('pinch', function(event) {
+      if(!pinch) return;
       var sc = Math.abs(Math.log(event.gesture.scale));
       if (sc > 0.2 && sc < 0.4){
         var s = Math.round(1 / event.gesture.scale * dataSource.sampleSize());
