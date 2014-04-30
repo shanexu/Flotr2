@@ -3677,15 +3677,26 @@ Flotr.Series = Series;
   _     = Flotr._,
   H     = Flotr.hammer,
   flotr = Flotr;
-  
-  Chart = function(el, data, options, dataSource){
-    this.el = el;
-    this.data = data;
-    this.options = options;
-    this.dataSource = dataSource;
-    var graph = null;
-    var rid = null;
-    var move = false;
+  /*
+   opts = {
+     el: el,
+     data: data,
+     options: options,
+     dataSource: dataSource,
+     move: move,
+     pinch: pinch
+   }
+  */
+  Chart = function(opts){
+    var el = opts.el,
+        data = opts.data,
+        options = opts.options,
+        dataSource = opts.dataSource,
+        graph = null,
+        rid = null,
+        move = opts.move || false,
+        pinch = opts.pinch || false;
+    
     this.move = function(value){
       if(!_.isUndefined(value)){
         move = value;
@@ -3707,8 +3718,6 @@ Flotr.Series = Series;
         });
       });
     };
-
-    var pinch = false;
 
     this.pinch = function(value){
       if(!_.isUndefined(value)){

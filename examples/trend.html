@@ -72,7 +72,7 @@
       var el = $("#container")[0];
       $(el).height($(document).height()*1);
       // dataSource = new ArrayDataSource(KLINE_DATA_ARRAY, {sampleSize: 50, maxSampleSize:300, minSampleSize:10});
-      dataSource = new ArrayDataSource(TREND_DATA_ARRAY.slice(100), {length: 240, maxSampleSize:300, minSampleSize:10});
+      dataSource = new ArrayDataSource(TREND_DATA_ARRAY.slice(0), {length: 240, maxSampleSize:300, minSampleSize:10});
       var data = [{
         data:dataSource,
         lines: {
@@ -121,7 +121,15 @@
           color: "#899197"
         }
       };
-      chart = new Chart(el, data, options, dataSource);
+      var opts = {
+        el: el,
+        data: data,
+        options: options,
+        dataSource: dataSource,
+        move: false,
+        pinch: false
+      }
+      chart = new Chart(opts);
       $("#rotateBtn").click(function(){
         options.rotate = !options.rotate;
         chart.redraw();

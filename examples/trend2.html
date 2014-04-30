@@ -87,7 +87,15 @@
           color: "#899197"
         }
       };
-      chart = new Chart(el, data, options, dataSource);
+      var opts = {
+        el: el,
+        data: data,
+        options: options,
+        dataSource: dataSource,
+        move: false,
+        pinch: false
+      }
+      chart = new Chart(opts);
       $("#rotateBtn").click(function(){
         options.rotate = !options.rotate;
         chart.redraw();
