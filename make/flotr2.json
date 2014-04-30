@@ -26,6 +26,7 @@
       "./js/types/timeline.js",
       "./js/types/stock/candles.js",
       "./js/types/stock/volumes.js",
+      "./js/types/stock/trends.js",
       "./js/plugins/crosshair.js",
       "./js/plugins/download.js",
       "./js/plugins/grid.js",

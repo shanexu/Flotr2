@@ -42,6 +42,7 @@
   <script src="../js/types/bubbles.js"></script>
   <script src="../js/types/stock/candles.js"></script>
   <script src="../js/types/stock/volumes.js"></script>
+  <script src="../js/types/stock/trends.js"></script>
   <script src="../js/types/gantt.js"></script>
   <script src="../js/types/markers.js"></script>
   <script src="../js/types/pie.js"></script>
@@ -75,7 +76,7 @@
       dataSource = new ArrayDataSource(TREND_DATA_ARRAY.slice(0), {length: 240, maxSampleSize:300, minSampleSize:10});
       var data = [{
         data:dataSource,
-        lines: {
+        stock_trends: {
           fill:true,
 	      show: true,
 	    },
@@ -100,6 +101,7 @@
           showLabels: true,
           showMinorLabels: true,
 	      height: 0.8,
+          prevClose: 28.18,
           specialTicks: [[28.18, '28.18']]
 	    },
         y2axis: {
