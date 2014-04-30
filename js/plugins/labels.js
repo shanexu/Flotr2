@@ -138,13 +138,21 @@ Flotr.addPlugin('labels', {
       style = Flotr.getBestTextAlign(style.angle, style);
 
       for (i = 0; i < axis.ticks.length && continueShowingLabels(axis); ++i) {
-
         tick = axis.ticks[i];
-        if (!tick.label || !tick.label.length) { continue; }
+        drawNoHtmlTick(tick);
+      }
+
+      for (i = 0; i < axis.specialTicks.length && continueShowingLabels(axis); ++i) {
+        tick = axis.specialTicks[i];
+        drawNoHtmlTick(tick);
+      }
+
+      function drawNoHtmlTick(tick){
+        if (!tick.label || !tick.label.length) { return; }
 
         offset = axis.d2p(tick.v);
         if (offset < 0 ||
-            offset > (isX ? graph.plotWidth : graph.plotHeight)) { continue; }
+            offset > (isX ? graph.plotWidth : graph.plotHeight)) { return; }
 
         Flotr.drawText(
           ctx, tick.label,
@@ -200,10 +208,20 @@ Flotr.addPlugin('labels', {
       if (axis.options.showLabels && (isFirst ? true : axis.used)) {
         for (i = 0; i < axis.ticks.length; ++i) {
           tick = axis.ticks[i];
+          drawHtmlTick(tick);
+        }
+
+        for (i = 0; i < axis.specialTicks.length; ++i) {
+          tick = axis.specialTicks[i];
+          drawHtmlTick(tick);
+        }
+      }
+
+      function drawHtmlTick(tick) {
           if (!tick.label || !tick.label.length ||
               ((isX ? offset.left : offset.top) + axis.d2p(tick.v) < 0) ||
               ((isX ? offset.left : offset.top) + axis.d2p(tick.v) > (isX ? graph.canvasWidth : graph.canvasHeight))) {
-            continue;
+            return;
           }
           top = offset.top +
             (isX ?
@@ -234,7 +252,6 @@ Flotr.addPlugin('labels', {
             ctx.lineTo(offset.left + graph.plotWidth, offset.top + axis.d2p(tick.v));
           }
         }
-      }
     }
   }
 

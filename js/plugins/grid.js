@@ -92,12 +92,20 @@ Flotr.addPlugin('graphGrid', {
 
       a = this.axes.x;
       if (verticalLines)        this.graphGrid.drawGridLines(a, grid, a.ticks, ctx, this.graphGrid.drawVerticalLines(scope));
-      if (minorVerticalLines)   this.graphGrid.drawGridLines(a, grid, a.minorTicks, ctx, this.graphGrid.drawVerticalLines(scope));
-
+      if (minorVerticalLines)   this.graphGrid.drawGridLines(a, grid, a.minorTicks, ctx, this.graphGrid.drawVerticalLines(scope));      
+      
       a = this.axes.y;
       if (horizontalLines)      this.graphGrid.drawGridLines(a, grid, a.ticks, ctx, this.graphGrid.drawHorizontalLines(scope));
       if (minorHorizontalLines) this.graphGrid.drawGridLines(a, grid, a.minorTicks, ctx, this.graphGrid.drawHorizontalLines(scope));
-
+      
+      ctx.stroke();
+      ctx.strokeStyle = grid.specialColor;
+      ctx.setLineDash(grid.specialLineDash);
+      ctx.beginPath();
+      a = this.axes.x;
+      this.graphGrid.drawGridLines(a, grid, a.specialTicks, ctx, this.graphGrid.drawVerticalLines(scope));
+      a = this.axes.y;
+      this.graphGrid.drawGridLines(a, grid, a.specialTicks, ctx, this.graphGrid.drawHorizontalLines(scope));
       ctx.stroke();
     }
     
@@ -143,6 +151,15 @@ Flotr.addPlugin('graphGrid', {
       if (minorHorizontalLines) this.graphGrid.drawGridLines(a, grid, a.minorTicks, ctx, this.graphGrid.drawHorizontalLines(scope));
     }
     
+    ctx.stroke();
+    
+    ctx.strokeStyle = grid.specialColor;
+    ctx.setLineDash(grid.specialLineDash);
+    ctx.beginPath();
+    a = this.axes.x;
+    this.graphGrid.drawGridLines(a, grid, a.specialTicks, ctx, this.graphGrid.drawVerticalLines(scope));
+    a = this.axes.y2;
+    this.graphGrid.drawGridLines(a, grid, a.specialTicks, ctx, this.graphGrid.drawHorizontalLines(scope));
     ctx.stroke();
     
     ctx.restore();

@@ -63,6 +63,7 @@ Axis.prototype = {
 
     this.ticks = [];
     this.minorTicks = [];
+    this.specialTicks = [];
     
     // User Ticks
     if(options.ticks){
@@ -79,9 +80,14 @@ Axis.prototype = {
       }
     }
 
+    if(options.specialTicks){
+      this._cleanUserTicks(options.specialTicks, this.specialTicks);
+    }
+
     // Ticks to strings
     _.each(this.ticks, function (tick) { tick.label += ''; });
     _.each(this.minorTicks, function (tick) { tick.label += ''; });
+    _.each(this.specialTicks, function (tick) { tick.label += ''; });
   },
 
   /**

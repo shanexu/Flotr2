@@ -1680,7 +1680,9 @@ Flotr.defaultOptions = {
     minorHorizontalLines: null, // => whether to show gridlines for minor ticks in horizontal dir.
     outlineWidth: 1,       // => width of the grid outline/border in pixels
     outline : 'nsew',      // => walls of the outline to display
-    circular: false        // => if set to true, the grid will be circular, must be used when radars are drawn
+    circular: false,        // => if set to true, the grid will be circular, must be used when radars are drawn,
+    specialColor: '#7d9979',
+    specialLineDash: [5,5]
   },
   mouse: {
     track: false,          // => true to track the mouse, no tracking otherwise
@@ -3254,6 +3256,7 @@ Axis.prototype = {
 
     this.ticks = [];
     this.minorTicks = [];
+    this.specialTicks = [];
     
     // User Ticks
     if(options.ticks){
@@ -3270,9 +3273,14 @@ Axis.prototype = {
       }
     }
 
+    if(options.specialTicks){
+      this._cleanUserTicks(options.specialTicks, this.specialTicks);
+    }
+
     // Ticks to strings
     _.each(this.ticks, function (tick) { tick.label += ''; });
     _.each(this.minorTicks, function (tick) { tick.label += ''; });
+    _.each(this.specialTicks, function (tick) { tick.label += ''; });
   },
 
   /**
@@ -6261,12 +6269,20 @@ Flotr.addPlugin('graphGrid', {
 
       a = this.axes.x;
       if (verticalLines)        this.graphGrid.drawGridLines(a, grid, a.ticks, ctx, this.graphGrid.drawVerticalLines(scope));
-      if (minorVerticalLines)   this.graphGrid.drawGridLines(a, grid, a.minorTicks, ctx, this.graphGrid.drawVerticalLines(scope));
-
+      if (minorVerticalLines)   this.graphGrid.drawGridLines(a, grid, a.minorTicks, ctx, this.graphGrid.drawVerticalLines(scope));      
+      
       a = this.axes.y;
       if (horizontalLines)      this.graphGrid.drawGridLines(a, grid, a.ticks, ctx, this.graphGrid.drawHorizontalLines(scope));
       if (minorHorizontalLines) this.graphGrid.drawGridLines(a, grid, a.minorTicks, ctx, this.graphGrid.drawHorizontalLines(scope));
-
+      
+      ctx.stroke();
+      ctx.strokeStyle = grid.specialColor;
+      ctx.setLineDash(grid.specialLineDash);
+      ctx.beginPath();
+      a = this.axes.x;
+      this.graphGrid.drawGridLines(a, grid, a.specialTicks, ctx, this.graphGrid.drawVerticalLines(scope));
+      a = this.axes.y;
+      this.graphGrid.drawGridLines(a, grid, a.specialTicks, ctx, this.graphGrid.drawHorizontalLines(scope));
       ctx.stroke();
     }
     
@@ -6312,6 +6328,15 @@ Flotr.addPlugin('graphGrid', {
       if (minorHorizontalLines) this.graphGrid.drawGridLines(a, grid, a.minorTicks, ctx, this.graphGrid.drawHorizontalLines(scope));
     }
     
+    ctx.stroke();
+    
+    ctx.strokeStyle = grid.specialColor;
+    ctx.setLineDash(grid.specialLineDash);
+    ctx.beginPath();
+    a = this.axes.x;
+    this.graphGrid.drawGridLines(a, grid, a.specialTicks, ctx, this.graphGrid.drawVerticalLines(scope));
+    a = this.axes.y2;
+    this.graphGrid.drawGridLines(a, grid, a.specialTicks, ctx, this.graphGrid.drawHorizontalLines(scope));
     ctx.stroke();
     
     ctx.restore();
@@ -7291,13 +7316,21 @@ Flotr.addPlugin('labels', {
       style = Flotr.getBestTextAlign(style.angle, style);
 
       for (i = 0; i < axis.ticks.length && continueShowingLabels(axis); ++i) {
-
         tick = axis.ticks[i];
-        if (!tick.label || !tick.label.length) { continue; }
+        drawNoHtmlTick(tick);
+      }
+
+      for (i = 0; i < axis.specialTicks.length && continueShowingLabels(axis); ++i) {
+        tick = axis.specialTicks[i];
+        drawNoHtmlTick(tick);
+      }
+
+      function drawNoHtmlTick(tick){
+        if (!tick.label || !tick.label.length) { return; }
 
         offset = axis.d2p(tick.v);
         if (offset < 0 ||
-            offset > (isX ? graph.plotWidth : graph.plotHeight)) { continue; }
+            offset > (isX ? graph.plotWidth : graph.plotHeight)) { return; }
 
         Flotr.drawText(
           ctx, tick.label,
@@ -7353,10 +7386,20 @@ Flotr.addPlugin('labels', {
       if (axis.options.showLabels && (isFirst ? true : axis.used)) {
         for (i = 0; i < axis.ticks.length; ++i) {
           tick = axis.ticks[i];
+          drawHtmlTick(tick);
+        }
+
+        for (i = 0; i < axis.specialTicks.length; ++i) {
+          tick = axis.specialTicks[i];
+          drawHtmlTick(tick);
+        }
+      }
+
+      function drawHtmlTick(tick) {
           if (!tick.label || !tick.label.length ||
               ((isX ? offset.left : offset.top) + axis.d2p(tick.v) < 0) ||
               ((isX ? offset.left : offset.top) + axis.d2p(tick.v) > (isX ? graph.canvasWidth : graph.canvasHeight))) {
-            continue;
+            return;
           }
           top = offset.top +
             (isX ?
@@ -7387,7 +7430,6 @@ Flotr.addPlugin('labels', {
             ctx.lineTo(offset.left + graph.plotWidth, offset.top + axis.d2p(tick.v));
           }
         }
-      }
     }
   }
 

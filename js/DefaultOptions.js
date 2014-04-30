@@ -82,7 +82,9 @@ Flotr.defaultOptions = {
     minorHorizontalLines: null, // => whether to show gridlines for minor ticks in horizontal dir.
     outlineWidth: 1,       // => width of the grid outline/border in pixels
     outline : 'nsew',      // => walls of the outline to display
-    circular: false        // => if set to true, the grid will be circular, must be used when radars are drawn
+    circular: false,        // => if set to true, the grid will be circular, must be used when radars are drawn,
+    specialColor: '#7d9979',
+    specialLineDash: [5,5]
   },
   mouse: {
     track: false,          // => true to track the mouse, no tracking otherwise
