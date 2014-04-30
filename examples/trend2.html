@@ -27,7 +27,7 @@
   <script src="js/hammer.js"></script>
   <script src="../lib/bean.js"></script>
   <script src="../lib/underscore.js"></script>
-  <script src="../build/flotr2.js"></script>
+  <script src="../flotr2.js"></script>
   <script src="js/data.js"></script>
   <script src="js/data1.js"></script>
   <script src="js/dataSource1.js"></script>
@@ -38,7 +38,7 @@
     $(function(){
       var el = $("#container")[0];
       $(el).height($(document).height()*1);
-      dataSource = new ArrayDataSource(TREND_DATA_ARRAY.slice(100), {length: 240, maxSampleSize:300, minSampleSize:10});
+      dataSource = new ArrayDataSource(TREND_DATA_ARRAY, {length: 240, maxSampleSize:300, minSampleSize:10});
       var data = [{
         data:dataSource,
         lines: {
