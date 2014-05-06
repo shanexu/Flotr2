@@ -26,7 +26,7 @@ Flotr.addPlugin('datacursor', {
       
       if(oe.type != "mousedown" && oe.type != "touchmove") return;
 
-      if(adx >= 1){
+      if(adx >= 1 && this.datacross.state !== 'datacross'){
         x0 = x1;
         y0 = y1;
         E.fire(this.el, "flotr:datacursor", [-dx, this]);

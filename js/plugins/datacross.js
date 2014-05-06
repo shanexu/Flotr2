@@ -4,19 +4,53 @@ var
   D = Flotr.DOM,
   E = Flotr.EventAdapter;
 
+var eventList = function(that){
+  if(!that.datacross.eventList){
+    that.datacross.eventList = [];
+  }
+  return that.datacross.eventList;
+};
+
+var clearEventList = function(that){
+  var l = eventList(that);
+  while(l.length) {
+    l.pop();
+  }
+};
+
 Flotr.addPlugin('datacross', {
   options: {
-    mode: "",            // => one of null, 'x', 'y' or 'xy'
+    mode: '',            // => one of null, 'x', 'y' or 'xy'
     color: '#c1c1c1',      // => datacross color
     pointColor: '#00a8f0',
     hideCursor: false,       // => hide the cursor when the datacross is shown,
     drawPoint: false
   },
   callbacks: {
-    'flotr:click': function(pos, e) {
-      if (this.options.datacross.mode) {
-        this.datacross.clearDataCross(pos);
-        this.datacross.drawDataCross(pos);
+    'flotr:mousedown': function(e, pos){
+      var self = this;
+      self.datacross.state = 'mousedown';
+      self.datacross.timeout = setTimeout(function(){
+        self.datacross.state = 'datacross';
+        if (self.options.datacross.mode) {
+          self.datacross.clearDataCross(pos);
+          self.datacross.drawDataCross(pos);
+        }
+      }, 500);
+    },
+    'flotr:mouseup': function(e, pos){
+      this.datacross.state = 'mouseup';
+      clearTimeout(this.datacross.timeout);
+    },
+    'flotr:mousemove': function(e, pos){
+      if(this.datacross.state === 'datacross'){
+        if (this.options.datacross.mode) {
+          this.datacross.clearDataCross(pos);
+          this.datacross.drawDataCross(pos);
+        }
+      } else {
+        clearTimeout(this.datacross.timeout);
+        this.datacross.state = null;
       }
     }
   },
@@ -25,7 +59,6 @@ Flotr.addPlugin('datacross', {
     var x, y,
         context = this.octx;
     if(this.datacross.prevXY){
-      console.log("hello");
       x = this.datacross.prevXY.x;
       y = this.datacross.prevXY.y;
       context.clearRect(x - 5, y - 5, 10, 10);
@@ -95,9 +128,10 @@ Flotr.addPlugin('datacross', {
       octx.arc(x1, y1, 3, 0, 2 * Math.PI, false);
       octx.stroke();
       octx.closePath();
-      this.datacross.hideShowVH();
       this.datacross.prevXY = {x:x1, y:y1};
     }
+
+    this.datacross.hideShowVH();
     
   },
 
@@ -166,5 +200,4 @@ Flotr.addPlugin('datacross', {
   
 });
 })();
-
 
