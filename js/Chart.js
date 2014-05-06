@@ -34,7 +34,7 @@
     var drawGraph = function(){
       graph = Flotr.draw(el, data, options);
       
-      graph.observe(el, "flotr:datacursor", function(dx){
+      graph.observe(el, 'flotr:datacursor', function(dx){
         if(!move) return;
         dataSource.move(dx, function(){
           if(rid){
