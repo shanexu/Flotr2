@@ -101,10 +101,10 @@ Flotr.addPlugin('datacross', {
     
     if (options.mode.indexOf('v') != -1) {
       if(this.options.rotate){
-        v.style.top = y + "px";
+        v.style.top = y + 'px';
       } else {
-        v.style.left = x + "px";
-
+        v.style.left = x + 'px';
+        v.style.top = this.plotOffset.top + 'px';
       }
     }
     

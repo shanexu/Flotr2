@@ -1154,7 +1154,7 @@ Graph.prototype = {
         y = a.y,
         y2 = a.y2,
         maxOutset = options.grid.outlineWidth,
-        i, j, l, dim;
+        i, j, l, dim, hh;
 
     // TODO post refactor, fix this
     _.each(a, function (axis) {
@@ -1197,6 +1197,9 @@ Graph.prototype = {
 
       p.top    += (options.grid.circular ? 0 : (x2.used && x2.options.showLabels ? (x2.maxLabel.height + margin) : 0)) +
                   (x2.used && x2.options.title ? (x2.titleSize.height + margin) : 0) + this.subtitleHeight + this.titleHeight + maxOutset;
+      hh = y.maxLabel.height / 2;
+      p.top = p.top < hh ? hh : p.top;
+      p.bottom = p.bottom < hh ? hh : p.bottom;
     } else {
       p.bottom = x.options.margin;
       p.top = x.options.margin;
@@ -7157,10 +7160,10 @@ Flotr.addPlugin('datacross', {
     
     if (options.mode.indexOf('v') != -1) {
       if(this.options.rotate){
-        v.style.top = y + "px";
+        v.style.top = y + 'px';
       } else {
-        v.style.left = x + "px";
-
+        v.style.left = x + 'px';
+        v.style.top = this.plotOffset.top + 'px';
       }
     }
     
