@@ -65,6 +65,7 @@
             var
             v = parseInt(v),
             d = dataSource[v];
+            if (v === 0) return '';
             return d[d.length - 1];
             
           }
