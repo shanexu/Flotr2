@@ -208,7 +208,7 @@ Graph.prototype = {
       p.left  = 0;
       p.right = 0;
     } else
-    if (y.options.margin === true) {
+    if (y.options.margin === true && !y.options.tickInside) {
       p.left   += (options.grid.circular ? 0 : Math.max((y.used && y.options.showLabels ?  (y.maxLabel.width + margin) : 0), (y2.used &&  y2.options.stack && y2.options.showLabels ? (y2.maxLabel.width + margin) : 0))) +
                   (y.used && y.options.title ? (y.titleSize.width + margin) : 0) + maxOutset;
       p.right  += (options.grid.circular ? 0 : (y2.used && !y2.options.stack && y2.options.showLabels ? (y2.maxLabel.width + margin) : 0)) +

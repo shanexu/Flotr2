@@ -47,13 +47,13 @@ Flotr.addPlugin('labels', {
     if (!options.HtmlText && this.textEnabled) {
       drawLabelNoHtmlText(this, a.x, 'center', 'top');
       drawLabelNoHtmlText(this, a.x2, 'center', 'bottom');
-      drawLabelNoHtmlText(this, a.y, 'right', 'middle');
+      drawLabelNoHtmlText(this, a.y, ['right', 'left'][!!a.y.options.tickInside + 0], 'middle');
       if(a.y2.options.stack){
         ctx.restore();
         ctx.save();
         ctx.translate(0, this.canvasHeight - this.plotHeight - 2);
       }
-      drawLabelNoHtmlText(this, a.y2, (a.y2.options.stack? 'right' : 'left'), 'middle');
+      drawLabelNoHtmlText(this, a.y2, ['left', 'right'][(!!a.y2.options.tickInside ? !a.y2.options.stack : !!a.y2.options.stack) + 0], 'middle');
       if(a.y2.options.stack){
         ctx.restore();
         ctx.save();
