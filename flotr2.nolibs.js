@@ -2509,9 +2509,9 @@ Flotr.addType('lines', {
     for (i = 0; i < length; ++i) {
 
       // To allow empty values
-      if (data[i][1] === null || data[i+1][1] === null) {
+      if (data[i][options.yi] === null || data[i+1][options.yi] === null) {
         if (options.fill) {
-          if (i > 0 && data[i][1] !== null) {
+          if (i > 0 && data[i][options.yi] !== null) {
             context.stroke();
             fill();
             start = null;
@@ -2527,27 +2527,27 @@ Flotr.addType('lines', {
       // if (xa.options.scaling === 'logarithmic' && (data[i][0] <= 0 || data[i+1][0] <= 0)) continue;
       // if (ya.options.scaling === 'logarithmic' && (data[i][1] <= 0 || data[i+1][1] <= 0)) continue;
       
-      x1 = xScale(data[i][0]);
-      x2 = xScale(data[i+1][0]);
+      x1 = xScale(data[i][options.xi]);
+      x2 = xScale(data[i+1][options.xi]);
 
       if (start === null) start = data[i];
       
       if (stack) {
-        stack1 = stack.values[data[i][0]] || 0;
-        stack2 = stack.values[data[i+1][0]] || stack.values[data[i][0]] || 0;
-        y1 = yScale(data[i][1] + stack1);
-        y2 = yScale(data[i+1][1] + stack2);
+        stack1 = stack.values[data[i][options.xi]] || 0;
+        stack2 = stack.values[data[i+1][options.xi]] || stack.values[data[i][options.xi]] || 0;
+        y1 = yScale(data[i][options.yi] + stack1);
+        y2 = yScale(data[i+1][options.yi] + stack2);
         if (incStack) {
           data[i].y0 = stack1;
-          stack.values[data[i][0]] = data[i][1] + stack1;
+          stack.values[data[i][options.xi]] = data[i][options.yi] + stack1;
           if (i == length-1) {
             data[i+1].y0 = stack2;
-            stack.values[data[i+1][0]] = data[i+1][1] + stack2;
+            stack.values[data[i+1][options.xi]] = data[i+1][options.yi] + stack2;
           }
         }
       } else {
-        y1 = yScale(data[i][1]);
-        y2 = yScale(data[i+1][1]);
+        y1 = yScale(data[i][options.yi]);
+        y2 = yScale(data[i+1][options.yi]);
       }
 
       if (
@@ -2629,17 +2629,17 @@ Flotr.addType('lines', {
 
       for (j = 0; j < data.length; j++) {
 
-        x = data[j][0] + '';
+        x = data[j][options.xi] + '';
 
         // Positive
-        if (data[j][1] > 0) {
-          positiveSums[x] = (positiveSums[x] || 0) + data[j][1];
+        if (data[j][options.yi] > 0) {
+          positiveSums[x] = (positiveSums[x] || 0) + data[j][options.yi];
           newmax = Math.max(newmax, positiveSums[x]);
         }
 
         // Negative
         else {
-          negativeSums[x] = (negativeSums[x] || 0) + data[j][1];
+          negativeSums[x] = (negativeSums[x] || 0) + data[j][options.yi];
           newmin = Math.min(newmin, negativeSums[x]);
         }
       }
@@ -2666,10 +2666,10 @@ Flotr.addType('lines', {
           i;
 
         for (i = 0; i < length - 1; i++) {
-          if (x >= data[i][0] && x <= data[i+1][0]) {
-            if (Math.abs(yScale(data[i][1]) - relY) < 8) {
-              n.x = data[i][0];
-              n.y = data[i][1];
+          if (x >= data[i][options.xi] && x <= data[i+1][options.xi]) {
+            if (Math.abs(yScale(data[i][options.yi]) - relY) < 8) {
+              n.x = data[i][options.xi];
+              n.y = data[i][options.yi];
               n.index = i;
               n.seriesIndex = options.index;
             }
@@ -2716,7 +2716,7 @@ Flotr.addType('lines', {
           x2;
 
         if (data.length - 1 > index) {
-          x2 = options.xScale(data[index + 1][0]);
+          x2 = options.xScale(data[index + 1][options.xi]);
           context.clearRect(x - width, y - width, x2 - x + 2 * width, 2 * width);
         }
       };
