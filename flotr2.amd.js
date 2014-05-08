@@ -4437,6 +4437,12 @@ Flotr.addType('stock_candles', {
           if (y < ymin) { ymin = y; }
           if (y > ymax) { ymax = y; }
         }
+        if(!data[i][6]) return;
+        for(j = 6; j<9; j++){
+          y = data[i][j];
+          if (y < ymin) { ymin = y; }
+          if (y > ymax) { ymax = y; }
+        }
       }
       axis.max = Math.ceil(ymax * 2)/2.0;
       axis.min = Math.floor(ymin * 2)/2.0;
