@@ -192,7 +192,7 @@ Flotr.addType('stock_candles', {
           if (y < ymin) { ymin = y; }
           if (y > ymax) { ymax = y; }
         }
-        if(!data[i][6]) return;
+        if(!data[i][7]) return;
         for(j = 6; j<9; j++){
           y = data[i][j];
           if (y < ymin) { ymin = y; }
