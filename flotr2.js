@@ -8396,20 +8396,6 @@ var
   D = Flotr.DOM,
   E = Flotr.EventAdapter;
 
-var eventList = function(that){
-  if(!that.datacross.eventList){
-    that.datacross.eventList = [];
-  }
-  return that.datacross.eventList;
-};
-
-var clearEventList = function(that){
-  var l = eventList(that);
-  while(l.length) {
-    l.pop();
-  }
-};
-
 Flotr.addPlugin('datacross', {
   options: {
     mode: '',            // => one of null, 'x', 'y' or 'xy'
