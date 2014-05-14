@@ -65,11 +65,11 @@ Flotr.addPlugin('datacross', {
       c = this.hit.closest(pos),
       dataIndex = c.x.dataIndex,
       xvalue = this.data[0].data[dataIndex][0],
+      yvalue = this.getDataIndexValue(dataIndex),
       rotate = this.options.rotate,
       x = plotOffset.left + Math.round(rotate ? pos.relX : (this.axes.x.d2p(xvalue) -1)),
       y = plotOffset.top + Math.round(rotate ? (this.axes.x.d2p(xvalue) + plotOffset.left - plotOffset.top) : pos.relY),
       p = Math.round(this.axes.y.d2p(this.getDataIndexValue(dataIndex)));
-    E.fire(this.el, 'flotr:dataIndex', [dataIndex, this.axes.x, this]);
     if (!this.options.rotate && (pos.relX < 0 || pos.relY < 0 || pos.relX > this.plotWidth || (pos.relY > this.plotHeight && !this.axes.y2.options.stack)) ||
         this.options.rotate && (pos.relY < this.plotOffset.left || x > this.canvasHeight || pos.relX < -plotOffset.left + 1 || pos.relY + plotOffset.top > this.canvasWidth)) {
 
@@ -77,6 +77,7 @@ Flotr.addPlugin('datacross', {
       D.removeClass(this.el, 'flotr-datacross');
       D.hide(v);
       D.hide(h);
+      E.fire(this.el, 'flotr:dataIndex', [{dataIndex: -1}, this]);
       return; 
     }
     
@@ -118,7 +119,7 @@ Flotr.addPlugin('datacross', {
     }
 
     this.datacross.hideShowVH();
-    
+    E.fire(this.el, 'flotr:dataIndex', [{dataIndex: dataIndex, x:x, y:y, xvalue: xvalue, yvalue: yvalue, datum: this.data[0].data[dataIndex], data: this.data[0]}, this]);
   },
 
   getVH: function(){

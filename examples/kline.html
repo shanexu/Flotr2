@@ -12,6 +12,10 @@
         background-color: #101417;
         /* border: solid 1px #ff0000; */
       }
+      .datacrosslabel {
+        color: #FAFAFB;
+        background-color: #232C39;
+      }
     </style>
     <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <meta charset="utf-8"/>
@@ -50,6 +54,7 @@
   <script src="../js/types/timeline.js"></script>
   <script src="../js/plugins/crosshair.js"></script>
   <script src="../js/plugins/datacross.js"></script>
+  <script src="../js/plugins/datacrosslabel.js"></script>
   <script src="../js/plugins/download.js"></script>
   <script src="../js/plugins/grid.js"></script>
   <script src="../js/plugins/hit.js"></script>
@@ -118,12 +123,15 @@
           },
 	    },
         HtmlText: true,
+        datacrosslabel: {
+          show: true
+        },
         datacross: {
           mode: "vh",
           color: "#ffffff",
           hideCursor: false
         },
-        rotate: 1,
+        rotate: 0,
         grid: {
           tickColor: "#232f38",
           color: "#232f38"

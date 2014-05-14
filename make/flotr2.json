@@ -37,7 +37,8 @@
       "./js/plugins/spreadsheet.js",
       "./js/plugins/titles.js",
       "./js/plugins/datacursor.js",
-      "./js/plugins/datacross.js"
+      "./js/plugins/datacross.js",
+      "./js/plugins/datacrosslabel.js"
     ]
   }
 }

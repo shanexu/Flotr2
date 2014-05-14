@@ -7130,11 +7130,11 @@ Flotr.addPlugin('datacross', {
       c = this.hit.closest(pos),
       dataIndex = c.x.dataIndex,
       xvalue = this.data[0].data[dataIndex][0],
+      yvalue = this.getDataIndexValue(dataIndex),
       rotate = this.options.rotate,
       x = plotOffset.left + Math.round(rotate ? pos.relX : (this.axes.x.d2p(xvalue) -1)),
       y = plotOffset.top + Math.round(rotate ? (this.axes.x.d2p(xvalue) + plotOffset.left - plotOffset.top) : pos.relY),
       p = Math.round(this.axes.y.d2p(this.getDataIndexValue(dataIndex)));
-    E.fire(this.el, 'flotr:dataIndex', [dataIndex, this.axes.x, this]);
     if (!this.options.rotate && (pos.relX < 0 || pos.relY < 0 || pos.relX > this.plotWidth || (pos.relY > this.plotHeight && !this.axes.y2.options.stack)) ||
         this.options.rotate && (pos.relY < this.plotOffset.left || x > this.canvasHeight || pos.relX < -plotOffset.left + 1 || pos.relY + plotOffset.top > this.canvasWidth)) {
 
@@ -7142,6 +7142,7 @@ Flotr.addPlugin('datacross', {
       D.removeClass(this.el, 'flotr-datacross');
       D.hide(v);
       D.hide(h);
+      E.fire(this.el, 'flotr:dataIndex', [{dataIndex: -1}, this]);
       return; 
     }
     
@@ -7183,7 +7184,7 @@ Flotr.addPlugin('datacross', {
     }
 
     this.datacross.hideShowVH();
-    
+    E.fire(this.el, 'flotr:dataIndex', [{dataIndex: dataIndex, x:x, y:y, xvalue: xvalue, yvalue: yvalue, datum: this.data[0].data[dataIndex], data: this.data[0]}, this]);
   },
 
   getVH: function(){
@@ -7249,6 +7250,66 @@ Flotr.addPlugin('datacross', {
     (options.mode.indexOf("h") == -1) ? D.hide(h) : D.show(h);
   }
   
+});
+})();
+
+
+(function () {
+
+var
+  D = Flotr.DOM,
+  E = Flotr.EventAdapter;
+
+Flotr.addPlugin('datacrosslabel', {
+  options: {
+    show:false
+  },
+  callbacks: {
+    'flotr:dataIndex': function(map){
+      var options = this.options.datacrosslabel;
+      if (!options.show) return;
+      var el = this.datacrosslabel.labelEl();
+      if(map.dataIndex === -1){
+        D.hide(el);
+      } else {
+        el.innerHTML = map.yvalue;
+        el.style.top = (map.y - this.axes.y.maxLabel.height / 2) + 'px';
+        D.show(el);
+      }
+    }
+  },
+
+  showLabel: function(){
+
+  },
+
+  hideLabel: function(){
+
+  },
+
+  labelEl: function(){
+    if(!this.datacrosslabel.el){
+      var
+      el = D.create('div'),
+      p = this.el.getElementsByClassName('flotr-labels')[0],
+      w = parseInt(p.getElementsByClassName('flotr-grid-label-y')[0].style.width),
+      width = this.axes.y.maxLabel.width;
+      D.addClass(el, 'flotr-grid-label');
+      D.addClass(el, 'flotr-grid-lable-y');
+      D.addClass(el, 'datacrosslabel');
+      D.setStyles(el, {
+        position: 'absolute',
+        textAlign: 'right',
+        width: width + 'px',
+        left: (w - width)+'px',
+        fontSize: 'smaller'
+      });
+      this.datacrosslabel.el = el;
+      D.insert(this.el, el);
+      D.hide(el);
+    }
+    return this.datacrosslabel.el;
+  }
 });
 })();
 
