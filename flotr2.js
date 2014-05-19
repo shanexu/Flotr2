@@ -6512,7 +6512,9 @@ Flotr.addPlugin('graphGrid', {
       
       ctx.stroke();
       ctx.strokeStyle = grid.specialColor;
-      ctx.setLineDash(grid.specialLineDash);
+      if(ctx.setLineDash){
+        ctx.setLineDash(grid.specialLineDash);
+      }
       ctx.beginPath();
       a = this.axes.x;
       this.graphGrid.drawGridLines(a, grid, a.specialTicks, ctx, this.graphGrid.drawVerticalLines(scope));
@@ -6566,7 +6568,9 @@ Flotr.addPlugin('graphGrid', {
     ctx.stroke();
     
     ctx.strokeStyle = grid.specialColor;
-    ctx.setLineDash(grid.specialLineDash);
+    if(ctx.setLineDash){
+      ctx.setLineDash(grid.specialLineDash);
+    }
     ctx.beginPath();
     a = this.axes.x;
     this.graphGrid.drawGridLines(a, grid, a.specialTicks, ctx, this.graphGrid.drawVerticalLines(scope));
