@@ -1259,30 +1259,27 @@ Graph.prototype = {
       context.save();
       context.translate(this.plotOffset.left, this.plotOffset.top);
       this.series.sort(function(a,b){return a.yaxis.options.stack - a.yaxis.options.stack;});
-      for (i = 0; i < this.series.length; i++) {
-        var serie = this.series[i];
+      var ss = _.partition(this.series, function(s){return !s.yaxis.options.stack;});
+      _.each(ss[0], function(serie){
         if (!serie.hide) {
-          if (serie.yaxis.options.stack){
-            context.restore();
-            context.save();
-            context.translate(this.plotOffset.left, this.canvasHeight - this.plotHeight - 2);
-          }
-          if (serie.yaxis.options.stack){
-            E.fire(this.el, 'flotr:beforedrawy2axis', [this.series, this]);
-          }
           this.drawSeries(serie);
-          if (serie.yaxis.options.stack) {
-            context.restore();
-            this.clip2();
-            context.save();
-            context.translate(this.plotOffset.left, this.plotOffset.top);
-          } else {
-            context.restore();
-            this.clip();
-          }
         }
-      }
-
+      }, this);
+      context.restore();
+      this.clip();
+      context.restore();
+      context.save();
+      context.translate(this.plotOffset.left, this.canvasHeight - this.plotHeight - 2);
+      _.each(ss[1], function(serie){
+        if (!serie.hide) {
+          E.fire(this.el, 'flotr:beforedrawy2axis', [this.series, this]);
+          this.drawSeries(serie);
+        }
+      }, this);
+      context.restore();
+      this.clip2();
+      context.save();
+      context.translate(this.plotOffset.left, this.plotOffset.top);
       context.restore();
     }
 
