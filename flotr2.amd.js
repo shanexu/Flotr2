@@ -4493,7 +4493,7 @@ Flotr.addType('stock_volumes', {
       prevClose       = options.prevClose,
       i, geometry, left, top, width, height,
       datum, open, close, color, datum0, open0, close0, fill;
-debugger;
+
     if (data.length < 1) return;
 
     for (i = 0; i < data.length; i++) {
