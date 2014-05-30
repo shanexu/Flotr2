@@ -87,11 +87,13 @@
 	    },
       }, {
         data:dataSource,
-        bars: {
+        stock_volumes: {
           show: true,
-          barWidth: 0.6
+          barWidth: 0.6,
+          forceFill: true,
+          yi: 2,
+          prevClose: 28.18
         },
-        yi: 2,
         yaxis: 2
       }];
       var options = {
