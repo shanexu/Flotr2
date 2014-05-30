@@ -6292,7 +6292,8 @@ Flotr.addType('stock_volumes', {
 	upFillColor: '#ff413a',// => up sticks fill color
     downFillColor: '#15a645',// => down sticks fill color
     fillOpacity: 1.0,      // => opacity of the fill color, set to 1 for a solid fill, 0 hides the fill,
-    forceFill: false
+    forceFill: false,
+    inTrend: false
   },
 
   draw : function (options) {
@@ -6322,6 +6323,7 @@ Flotr.addType('stock_volumes', {
       forceFill       = options.forceFill,
       yi              = options.yi,
       prevClose       = options.prevClose,
+      inTrend         = options.inTrend,
       i, geometry, left, top, width, height,
       datum, open, close, color, datum0, open0, close0, fill;
 
@@ -6341,7 +6343,7 @@ Flotr.addType('stock_volumes', {
       close   = datum[4];
       datum0  = data[i-1];
 
-      if(prevClose !== undefined){
+      if(inTrend){
         var prev = datum0 ? datum0[1] : prevClose;
         color = options[prev > datum[1] ? 'downFillColor' : 'upFillColor'];
         
@@ -6355,7 +6357,7 @@ Flotr.addType('stock_volumes', {
         context.fillRect(left + shadowSize, top + shadowSize, width, height);
         context.restore();
       }
-      if(datum0 && prevClose === undefined){
+      if(datum0 && !inTrend){
         open0 = datum0[1];
         close0 = datum0[4];
         fill = open > close ? ( close <= close0 && close <= open0 ) : (close >= close0 && close >= open0);
