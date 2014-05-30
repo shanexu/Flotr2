@@ -138,8 +138,8 @@ Graph.prototype = {
 
   extendRange : function (type, series) {
     if (this[type].extendRange) this[type].extendRange(series, series.data, series[type], this[type]);
-    if (this[type].extendYRange) this[type].extendYRange(series.yaxis, series.data, series[type], this[type]);
-    if (this[type].extendXRange) this[type].extendXRange(series.xaxis, series.data, series[type], this[type]);
+    if (this[type].extendYRange) this[type].extendYRange(series.yaxis, series.data, series[type], this[type], series);
+    if (this[type].extendXRange) this[type].extendXRange(series.xaxis, series.data, series[type], this[type], series);
   },
 
   /**

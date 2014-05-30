@@ -41,7 +41,7 @@ Flotr.addType('stock_volumes', {
       prevClose       = options.prevClose,
       i, geometry, left, top, width, height,
       datum, open, close, color, datum0, open0, close0, fill;
-
+debugger;
     if (data.length < 1) return;
 
     for (i = 0; i < data.length; i++) {
@@ -59,7 +59,9 @@ Flotr.addType('stock_volumes', {
       datum0  = data[i-1];
 
       if(prevClose !== undefined){
-        color = options[datum[1] < prevClose ? 'downFillColor' : 'upFillColor'];
+        var prev = datum0 ? datum0[1] : prevClose;
+        color = options[prev > datum[1] ? 'downFillColor' : 'upFillColor'];
+        
       } else {
         color = options[open > close ? 'downFillColor' : 'upFillColor'];
       }
@@ -214,23 +216,23 @@ Flotr.addType('stock_volumes', {
     context.restore();
   },
 
-  extendXRange : function (axis, data, options, bars) {
-    if (!_.isNumber(axis.options.max)) {
-      axis.max = Math.max(axis.datamax + 0.5, axis.max);
-      axis.min = Math.min(axis.datamin - 0.5, axis.min);
-    }
-  },
+  // extendXRange : function (axis, data, options, bars) {
+  //   if (!_.isNumber(axis.options.max)) {
+  //     axis.max = Math.max(axis.datamax + 0.5, axis.max);
+  //     axis.min = Math.min(axis.datamin - 0.5, axis.min);
+  //   }
+  // },
 
-  extendYRange : function (axis, data, options, bars) {
+  extendYRange : function (axis, data, options, bars, series) {
     if (!_.isNumber(axis.options.max)) {
       var
       length = data.length,
       ymin = Number.MAX_VALUE,
       ymax = Number.MIN_VALUE,
       o = axis.options,
-      yi = options.yi,
+      yi = series.yi,
       y, i;
-      
+
       for (i = 0; i < length; i++){
         y = data[i][yi];
         ymin = y < ymin ? y : ymin;
