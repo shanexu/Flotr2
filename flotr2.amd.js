@@ -4489,6 +4489,8 @@ Flotr.addType('stock_volumes', {
       shadowSize      = options.shadowSize,
       lineWidth       = options.lineWidth,
       forceFill       = options.forceFill,
+      yi              = options.yi,
+      prevClose       = options.prevClose,
       i, geometry, left, top, width, height,
       datum, open, close, color, datum0, open0, close0, fill;
 
@@ -4496,7 +4498,7 @@ Flotr.addType('stock_volumes', {
 
     for (i = 0; i < data.length; i++) {
 
-      geometry = this.getBarGeometry(data[i][0], data[i][5], options);
+      geometry = this.getBarGeometry(data[i][0], data[i][yi], options);
       if (geometry === null) continue;
 
       left    = geometry.left;
@@ -4508,7 +4510,11 @@ Flotr.addType('stock_volumes', {
       close   = datum[4];
       datum0  = data[i-1];
 
-      color = options[open > close ? 'downFillColor' : 'upFillColor'];
+      if(prevClose !== undefined){
+        color = options[datum[1] < prevClose ? 'downFillColor' : 'upFillColor'];
+      } else {
+        color = options[open > close ? 'downFillColor' : 'upFillColor'];
+      }
 
       if (shadowSize) {
         context.save();
@@ -4516,12 +4522,12 @@ Flotr.addType('stock_volumes', {
         context.fillRect(left + shadowSize, top + shadowSize, width, height);
         context.restore();
       }
-      if(datum0){
+      if(datum0 && prevClose === undefined){
         open0 = datum0[1];
         close0 = datum0[4];
         fill = open > close ? ( close <= close0 && close <= open0 ) : (close >= close0 && close >= open0);
       }
-      if (fill || forceFill) {
+      if (forceFill || fill) {
         context.save();
         context.globalAlpha = options.fillOpacity;
         context.fillStyle = color;
@@ -4584,10 +4590,11 @@ Flotr.addType('stock_volumes', {
       width = hitGeometry.width / 2,
       left = hitGeometry.left,
       height = hitGeometry.y,
+      yi = options.yi,
       geometry, i;
 
     for (i = data.length; i--;) {
-      geometry = this.getBarGeometry(data[i][0], data[i][5], options);
+      geometry = this.getBarGeometry(data[i][0], data[i][yi], options);
       if (
         // Height:
         (
@@ -4600,7 +4607,7 @@ Flotr.addType('stock_volumes', {
         (Math.abs(left - geometry.left) < width)
       ) {
         n.x = data[i][0];
-        n.y = data[i][5];
+        n.y = data[i][yi];
         n.index = i;
         n.seriesIndex = options.index;
       }
@@ -4673,9 +4680,11 @@ Flotr.addType('stock_volumes', {
       ymin = Number.MAX_VALUE,
       ymax = Number.MIN_VALUE,
       o = axis.options,
+      yi = options.yi,
       y, i;
+      
       for (i = 0; i < length; i++){
-        y = data[i][5];
+        y = data[i][yi];
         ymin = y < ymin ? y : ymin;
         ymax = y > ymax ? y : ymax;
       }
