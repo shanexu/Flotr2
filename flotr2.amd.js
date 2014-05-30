@@ -4460,7 +4460,8 @@ Flotr.addType('stock_volumes', {
     barWidth: 0.6,           // => in units of the x axis
 	upFillColor: '#ff413a',// => up sticks fill color
     downFillColor: '#15a645',// => down sticks fill color
-    fillOpacity: 1.0      // => opacity of the fill color, set to 1 for a solid fill, 0 hides the fill
+    fillOpacity: 1.0,      // => opacity of the fill color, set to 1 for a solid fill, 0 hides the fill,
+    forceFill: false
   },
 
   draw : function (options) {
@@ -4487,6 +4488,7 @@ Flotr.addType('stock_volumes', {
       context         = options.context,
       shadowSize      = options.shadowSize,
       lineWidth       = options.lineWidth,
+      forceFill       = options.forceFill,
       i, geometry, left, top, width, height,
       datum, open, close, color, datum0, open0, close0, fill;
 
@@ -4519,7 +4521,7 @@ Flotr.addType('stock_volumes', {
         close0 = datum0[4];
         fill = open > close ? ( close <= close0 && close <= open0 ) : (close >= close0 && close >= open0);
       }
-      if (fill) {
+      if (fill || forceFill) {
         context.save();
         context.globalAlpha = options.fillOpacity;
         context.fillStyle = color;
