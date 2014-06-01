@@ -6319,6 +6319,13 @@ Flotr.addPlugin('labels', {
         }
       }
 
+      if (axis.options.showMinorLabels && (isFirst ? true : axis.used)) {
+        for (i = 0; i < axis.minorTicks.length; ++i) {
+          tick = axis.minorTicks[i];
+          drawHtmlTick(tick);
+        }
+      }
+
       function drawHtmlTick(tick) {
           if (!tick.label || !tick.label.length ||
               ((isX ? offset.left : offset.top) + axis.d2p(tick.v) < 0) ||
