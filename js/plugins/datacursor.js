@@ -20,8 +20,7 @@ Flotr.addPlugin('datacursor', {
       oe = e.originalEvent || e,
       x1 = pos.absX,
       y1 = pos.absY,
-      rotate = this.options.rotate,
-      dx = Math.round((rotate ? (y1 - y0) : (x1 - x0))/this.axes.x.scale * 1.5),
+      dx = Math.round((x1 - x0) / this.axes.x.scale * 1.5),
       adx = Math.abs(dx);
       
       if(oe.type != "mousedown" && oe.type != "touchmove") return;

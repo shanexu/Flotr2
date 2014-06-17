@@ -378,20 +378,12 @@ Graph.prototype = {
       ry = pointer.y - r.top - plotOffset.top;
       rrx = rx;
       rry = ry;
-      if(this.options.rotate){
-        rrx = pointer.y - r.top - plotOffset.left;
-        rry = this.canvasHeight - plotOffset.top - (pointer.x - r.left - plotOffset.left);
-      }
     } else {
       r = this.overlay.getBoundingClientRect();
       rx = e.clientX - r.left - plotOffset.left - b.scrollLeft - de.scrollLeft;
       ry = e.clientY - r.top - plotOffset.top - b.scrollTop - de.scrollTop;
       rrx = rx;
       rry = ry;
-      // if(this.options.rotate){
-      //   rrx = e.clientY - r.top - plotOffset.left - b.scrollTop - de.scrollTop;
-      //   rry = this.canvasHeight - plotOffset.top - (e.clientX - r.left - b.scrollLeft - de.scrollLeft);
-      // }
     }
 
     return {
@@ -703,12 +695,6 @@ Graph.prototype = {
     this.canvasHeight = size.height;
     this.canvasWidth = size.width;
     this.textEnabled = !!this.ctx.drawText || !!this.ctx.fillText; // Enable text functions
-    if(this.options.rotate){
-      this.canvasHeight = size.width;
-      this.canvasWidth = size.height;
-      this.ctx.transform(0, 1, -1, 0, size.width, 0);
-      this.octx.transform(0, 1, -1, 0, size.width, 0);
-    }
 
     function getCanvas(canvas, name){
       if(!canvas){
