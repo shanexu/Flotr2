@@ -236,10 +236,8 @@ Flotr.addPlugin('hit', {
     var
       series    = this.series,
       options   = this.options,
-      // relX      = mouse.relX,
-      // relY      = mouse.relY,
-      relX      = mouse.rotatedRelX,
-      relY      = mouse.rotatedRelY,
+      relX      = mouse.relX,
+      relY      = mouse.relY,
       compare   = Number.MAX_VALUE,
       compareX  = Number.MAX_VALUE,
       closest   = {},

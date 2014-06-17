@@ -388,10 +388,10 @@ Graph.prototype = {
       ry = e.clientY - r.top - plotOffset.top - b.scrollTop - de.scrollTop;
       rrx = rx;
       rry = ry;
-      if(this.options.rotate){
-        rrx = e.clientY - r.top - plotOffset.left - b.scrollTop - de.scrollTop;
-        rry = this.canvasHeight - plotOffset.top - (e.clientX - r.left - b.scrollLeft - de.scrollLeft);
-      }
+      // if(this.options.rotate){
+      //   rrx = e.clientY - r.top - plotOffset.left - b.scrollTop - de.scrollTop;
+      //   rry = this.canvasHeight - plotOffset.top - (e.clientX - r.left - b.scrollLeft - de.scrollLeft);
+      // }
     }
 
     return {
@@ -406,9 +406,7 @@ Graph.prototype = {
       absX: pointer.x,
       absY: pointer.y,
       pageX: pointer.x,
-      pageY: pointer.y,
-      rotatedRelX: rrx,
-      rotatedRelY: rry
+      pageY: pointer.y
     };
   },
   /**
