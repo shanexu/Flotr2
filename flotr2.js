@@ -2116,7 +2116,6 @@ Flotr.defaultOptions = {
   resolution: 1,           // => resolution of the graph, to have printer-friendly graphs !
   parseFloat: true,        // => whether to preprocess data for floats (ie. if input is string)
   preventDefault: true,    // => preventDefault by default for mobile events.  Turn off to enable scroll.
-  rotate: 0,               // => 0不旋转，1旋转90度
   xaxis: {
     ticks: null,           // => format: either [1, 3] or [[1, 'a'], 3]
     minorTicks: null,      // => format: either [1, 3] or [[1, 'a'], 3]
@@ -3206,20 +3205,12 @@ Graph.prototype = {
       ry = pointer.y - r.top - plotOffset.top;
       rrx = rx;
       rry = ry;
-      if(this.options.rotate){
-        rrx = pointer.y - r.top - plotOffset.left;
-        rry = this.canvasHeight - plotOffset.top - (pointer.x - r.left - plotOffset.left);
-      }
     } else {
       r = this.overlay.getBoundingClientRect();
       rx = e.clientX - r.left - plotOffset.left - b.scrollLeft - de.scrollLeft;
       ry = e.clientY - r.top - plotOffset.top - b.scrollTop - de.scrollTop;
       rrx = rx;
       rry = ry;
-      if(this.options.rotate){
-        rrx = e.clientY - r.top - plotOffset.left - b.scrollTop - de.scrollTop;
-        rry = this.canvasHeight - plotOffset.top - (e.clientX - r.left - b.scrollLeft - de.scrollLeft);
-      }
     }
 
     return {
@@ -3234,9 +3225,7 @@ Graph.prototype = {
       absX: pointer.x,
       absY: pointer.y,
       pageX: pointer.x,
-      pageY: pointer.y,
-      rotatedRelX: rrx,
-      rotatedRelY: rry
+      pageY: pointer.y
     };
   },
   /**
@@ -3533,12 +3522,6 @@ Graph.prototype = {
     this.canvasHeight = size.height;
     this.canvasWidth = size.width;
     this.textEnabled = !!this.ctx.drawText || !!this.ctx.fillText; // Enable text functions
-    if(this.options.rotate){
-      this.canvasHeight = size.width;
-      this.canvasWidth = size.height;
-      this.ctx.transform(0, 1, -1, 0, size.width, 0);
-      this.octx.transform(0, 1, -1, 0, size.width, 0);
-    }
 
     function getCanvas(canvas, name){
       if(!canvas){
@@ -6786,9 +6769,7 @@ Flotr.addPlugin('crosshair', {
       x = plotOffset.left + Math.round(pos.relX) + 0.5,
       y = plotOffset.top + Math.round(pos.relY) + 0.5;
 
-    if (!this.options.rotate && (pos.relX < 0 || pos.relY < 0 || pos.relX > this.plotWidth || (pos.relY > this.plotHeight && !this.axes.y2.options.stack)) ||
-        // TODO refined condition
-        this.options.rotate && (pos.relY < this.plotOffset.left )) {     
+    if (pos.relX < 0 || pos.relY < 0 || pos.relX > this.plotWidth || (pos.relY > this.plotHeight && !this.axes.y2.options.stack)) {     
       this.el.style.cursor = null;
       D.removeClass(this.el, 'flotr-crosshair');
       return; 
@@ -6805,23 +6786,13 @@ Flotr.addPlugin('crosshair', {
     octx.beginPath();
     
     if (options.mode.indexOf('x') != -1) {
-      if(this.options.rotate){
-        octx.moveTo(y, plotOffset.top);
-        octx.lineTo(y, plotOffset.top + this.axes.y2.options.stack ? this.canvasHeight : this.plotHeight);
-      } else {
-        octx.moveTo(x, plotOffset.top);
-        octx.lineTo(x, plotOffset.top + this.axes.y2.options.stack ? this.canvasHeight : this.plotHeight);
-      }
+      octx.moveTo(x, plotOffset.top);
+      octx.lineTo(x, plotOffset.top + this.axes.y2.options.stack ? this.canvasHeight : this.plotHeight);
     }
     
     if (options.mode.indexOf('y') != -1) {
-      if(this.options.rotate){
-        octx.moveTo(plotOffset.left, this.canvasHeight - x);
-        octx.lineTo(plotOffset.left + this.plotWidth, this.canvasHeight - x);
-      } else {
-        octx.moveTo(plotOffset.left, y);
-        octx.lineTo(plotOffset.left + this.plotWidth, y);
-      }
+      octx.moveTo(plotOffset.left, y);
+      octx.lineTo(plotOffset.left + this.plotWidth, y);
     }
     
     octx.stroke();
@@ -6841,14 +6812,14 @@ Flotr.addPlugin('crosshair', {
 
     if (position) {
       context.clearRect(
-        this.options.rotate ? y - 2.5 : x - 2.5,
+        x - 2.5,
         plotOffset.top,
         5,
         this.axes.y2.options.stack ? this.canvasHeight - plotOffset.top : this.plotHeight + 1
       );
       context.clearRect(
         plotOffset.left,
-        this.options.rotate ? this.canvasHeight - x - 2.5 : y - 2.5,
+        y - 2.5,
         this.plotWidth + 1,
         5
       );
@@ -7469,10 +7440,8 @@ Flotr.addPlugin('hit', {
     var
       series    = this.series,
       options   = this.options,
-      // relX      = mouse.relX,
-      // relY      = mouse.relY,
-      relX      = mouse.rotatedRelX,
-      relY      = mouse.rotatedRelY,
+      relX      = mouse.relX,
+      relY      = mouse.relY,
       compare   = Number.MAX_VALUE,
       compareX  = Number.MAX_VALUE,
       closest   = {},
@@ -8015,10 +7984,6 @@ Flotr.addPlugin('labels', {
         color: options.labels.color || options.grid.color
       });
       div.className = 'flotr-labels';
-      if(this.options.rotate){
-        div.style["-ms-transform-origin"] = div.style["-webkit-transform-origin"] = div.style.transformOrigin = "0 0";
-        div.style["-ms-transform"] = div.style["-webkit-transform"] = div.style.transform = "matrix(0, 1, -1, 0, "+ this.canvasHeight +", 0)";
-      }
       D.insert(this.el, div);
       D.insert(div, html);
     }
@@ -8889,8 +8854,7 @@ Flotr.addPlugin('datacursor', {
       oe = e.originalEvent || e,
       x1 = pos.absX,
       y1 = pos.absY,
-      rotate = this.options.rotate,
-      dx = Math.round((rotate ? (y1 - y0) : (x1 - x0))/this.axes.x.scale * 1.5),
+      dx = Math.round((x1 - x0) / this.axes.x.scale * 1.5),
       adx = Math.abs(dx);
       
       if(oe.type != "mousedown" && oe.type != "touchmove") return;
@@ -8985,13 +8949,10 @@ Flotr.addPlugin('datacross', {
       dataIndex = c.x.dataIndex,
       xvalue = this.data[0].data[dataIndex][0],
       yvalue = this.getDataIndexValue(dataIndex),
-      rotate = this.options.rotate,
-      x = plotOffset.left + Math.round(rotate ? pos.relX : (this.axes.x.d2p(xvalue) -1)),
-      y = plotOffset.top + Math.round(rotate ? (this.axes.x.d2p(xvalue) + plotOffset.left - plotOffset.top) : pos.relY),
+      x = plotOffset.left + Math.round(this.axes.x.d2p(xvalue) -1),
+      y = plotOffset.top + Math.round(pos.relY),
       p = Math.round(this.axes.y.d2p(this.getDataIndexValue(dataIndex)));
-    if (!this.options.rotate && (pos.relX < 0 || pos.relY < 0 || pos.relX > this.plotWidth || (pos.relY > this.plotHeight && !this.axes.y2.options.stack)) ||
-        this.options.rotate && (pos.relY < this.plotOffset.left || x > this.canvasHeight || pos.relX < -plotOffset.left + 1 || pos.relY + plotOffset.top > this.canvasWidth)) {
-
+    if (pos.relX < 0 || pos.relY < 0 || pos.relX > this.plotWidth || (pos.relY > this.plotHeight && !this.axes.y2.options.stack)) {
       this.el.style.cursor = null;
       D.removeClass(this.el, 'flotr-datacross');
       D.hide(v);
@@ -9006,26 +8967,18 @@ Flotr.addPlugin('datacross', {
     }
     
     if (options.mode.indexOf('v') != -1) {
-      if(this.options.rotate){
-        v.style.top = y + 'px';
-      } else {
-        v.style.left = x + 'px';
-        v.style.top = this.plotOffset.top + 'px';
-      }
+      v.style.left = x + 'px';
+      v.style.top = this.plotOffset.top + 'px';
     }
     
     if (options.mode.indexOf('h') != -1) {
-      if(this.options.rotate){
-        h.style.left = (this.canvasHeight - plotOffset.top - 2  - p) + "px";
-      } else {
-        y = p + this.plotOffset.top + 1;
-        h.style.top = y + "px";
-      }
+      y = p + this.plotOffset.top + 1;
+      h.style.top = y + "px";
     }
     
     if(options.drawPoint){
-      var x1 = rotate ? y : x;
-      var y1 = rotate ? p + 2 : y;
+      var x1 = x;
+      var y1 = y;
 
       octx.save();
       octx.strokeStyle = options.pointColor || options.color;
@@ -9048,42 +9001,23 @@ Flotr.addPlugin('datacross', {
       h = D.create("div"),
       options = this.options.datacross,
       color = options.color,
-      rotate = this.options.rotate,
       stack = this.axes.y2.options.stack;
-      if(rotate){
-        D.setStyles(v, {
-          "borderTop": "1px solid "+ color,
-          "position": "absolute",
-          "width": (this.canvasHeight - this.plotOffset.top - (this.axes.y2.options.stack?1:this.plotOffset.bottom))+"px",
-          "height": 0,
-          "top": this.plotOffset.left + "px",
-          "left": (stack ? 1 : this.plotOffset.bottom) + "px"
-        });
 
-        D.setStyles(h, {
-          "borderLeft": "1px solid "+ color,
-          "position": "absolute",
-          "height": this.plotWidth+"px",
-          "width": 0,
-          "left": (stack ? 1 : this.plotOffset.bottom) + "px",
-          "top": this.plotOffset.left + "px"
-        });
-      } else {
-        D.setStyles(v, {
-          "borderLeft": "1px solid "+ color,
-          "position": "absolute",
-          "width": 0,
-          "height": (this.canvasHeight - this.plotOffset.top - (stack?1:this.plotOffset.bottom))+"px"
-        });
+      D.setStyles(v, {
+        "borderLeft": "1px solid "+ color,
+        "position": "absolute",
+        "width": 0,
+        "height": (this.canvasHeight - this.plotOffset.top - (stack?1:this.plotOffset.bottom))+"px"
+      });
 
-        D.setStyles(h, {
-          "borderTop": "1px solid "+ color,
-          "position": "absolute",
-          "height": 0,
-          "width": this.plotWidth+"px",
-          "left": this.plotOffset.left+"px"
-        });
-      }
+      D.setStyles(h, {
+        "borderTop": "1px solid "+ color,
+        "position": "absolute",
+        "height": 0,
+        "width": this.plotWidth+"px",
+        "left": this.plotOffset.left+"px"
+      });
+
       
       D.insert(this.el, v);
       D.insert(this.el, h);
