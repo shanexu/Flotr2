@@ -1,11 +1,13 @@
 (function(){
   var i = 0,
-      datum;
+      datum,
+      datum_1;
   TREND_DATA_ARRAY = [];
   
   for (i = 0; i<TREND_DATA.items.length; i++){
     datum = TREND_DATA.items[i];
-    TREND_DATA_ARRAY.push([i, datum.price/1000, datum.vol]);
+    datum_1 = TREND_DATA.items[i-1];
+    TREND_DATA_ARRAY.push([i, datum.price/1000, datum_1 ? datum.vol - datum_1.vol : datum.vol]);
   }
 
   KLINE_DATA_ARRAY = [];
